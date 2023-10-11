@@ -6,13 +6,17 @@ abstract class HomeEvent extends Equatable{
   List<Object?> get props => [];
 }
 
-class HomeSlideMenuEvent extends HomeEvent{
+class HomeInitEvent extends HomeEvent{
 
-  // false 是关闭，true 是需要打开
-   bool menuState = false;
 
-   HomeSlideMenuEvent({required this.menuState});
 
-  @override
-  List<Object?> get props => [menuState];
 }
+
+
+class HomeGetTypeDataEvent extends HomeEvent{
+
+
+
+}
+
+

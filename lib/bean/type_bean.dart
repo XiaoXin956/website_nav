@@ -9,6 +9,8 @@ class TypeBean {
         "name": "$name",
       };
 
-  TypeBean toFrom(Map<String, dynamic> maps) => TypeBean(id: maps['id'], name: maps['name']);
+  factory TypeBean.fromJson(Map<String, dynamic> maps) => TypeBean(id: maps['id'], name: maps['name']);
 
 }
+
+

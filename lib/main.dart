@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_strategy/url_strategy.dart';
 import 'package:website_nav/pages/home/home_bloc.dart';
 
-import 'pages/home/home_page.dart';
+import 'pages/home/view/home_page.dart';
 
 void main() {
+
+  setPathUrlStrategy();
+
   runApp(const MyApp());
 }
 
