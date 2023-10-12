@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:website_nav/pages/home/home_bloc.dart';
 import 'package:website_nav/pages/home/home_event.dart';
 import 'package:website_nav/pages/home/view/slide_menu_view.dart';
+import 'package:website_nav/utils/print_utils.dart';
 
 import '../home_state.dart';
 
@@ -17,6 +18,7 @@ class HomePage extends StatelessWidget {
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (BuildContext context, state) {
         if (state is HomeInitialState) {
+          printWhite("首頁");
         } else {}
 
         return _buildUI(context);

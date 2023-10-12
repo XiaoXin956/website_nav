@@ -9,13 +9,13 @@ abstract class HomeEvent extends Equatable{
 class HomeInitEvent extends HomeEvent{
 
 
-
+  HomeInitEvent();
 }
-
 
 class HomeGetTypeDataEvent extends HomeEvent{
 
 
+  HomeGetTypeDataEvent();
 
 }
 

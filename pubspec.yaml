@@ -39,7 +39,6 @@ dependencies:
   dio:
   flutter_screenutil:
   easy_refresh:
-  shelf_proxy: ^1.0.4
   url_strategy:
 
   # The following adds the Cupertino Icons font to your application.

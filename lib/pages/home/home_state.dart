@@ -7,7 +7,10 @@ abstract class HomeState extends Equatable {
   List<Object?> get props => [];
 }
 
-class HomeInitialState extends HomeState {}
+class HomeInitialState extends HomeState {
+
+  HomeInitialState();
+}
 
 class HomeTypeLoadingState extends HomeState {
 
@@ -21,7 +24,7 @@ class HomeTypeDataSuccessState extends HomeState {
   HomeTypeDataSuccessState({required this.typeData});
 
   @override
-  List<Object?> get props => [typeData.map((e) => e.id).toList()];
+  List<Object?> get props => [typeData];
 }
 
 
