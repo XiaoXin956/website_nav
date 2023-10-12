@@ -37,10 +37,8 @@ class _SlideMenuViewState extends State<SlideMenuView> with SingleTickerProvider
         }
       });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-
-      homeBloc?.add(HomeGetTypeDataEvent());
+      homeBloc?.add(HomeGetTypeDataEvent(data: {"language":"en","type":"all"}));
     });
-
   }
 
   @override
@@ -63,6 +61,7 @@ class _SlideMenuViewState extends State<SlideMenuView> with SingleTickerProvider
           context.read<HomeBloc>().add(HomeInitEvent());
         } else if (state is HomeTypeDataFailState) {
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            ScaffoldMessenger.of(context).clearSnackBars();
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("${state.msg}")));
           });
           loadingError = true;
@@ -77,10 +76,31 @@ class _SlideMenuViewState extends State<SlideMenuView> with SingleTickerProvider
                 color: Colors.blue,
                 child: Column(
                   children: [
+
+                    GestureDetector(
+                        onTap: () {
+                          if (_isExpanded) {
+                            _animationController.reverse();
+                          } else {
+                            _animationController.forward();
+                          }
+                        },
+                        child: AnimatedCrossFade(
+                            firstChild: Icon(
+                              Icons.menu,
+                              size: 30,
+                            ),
+                            secondChild: Icon(
+                              Icons.arrow_back,
+                              size: 30,
+                            ),
+                            crossFadeState: !_isExpanded ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                            duration: Duration(milliseconds: 200))),
+
                     if (loadingError)
                       TextButton(
                         onPressed: () {
-                          context.read<HomeBloc>().add(HomeGetTypeDataEvent());
+                          context.read<HomeBloc>().add(HomeGetTypeDataEvent(data: {"language":"en","type":"all"}));
                         },
                         child: Text('重新加載'),
                       ),
@@ -97,32 +117,17 @@ class _SlideMenuViewState extends State<SlideMenuView> with SingleTickerProvider
                                 padding: EdgeInsets.zero,
                                 itemCount: typeData.length + 1,
                                 itemBuilder: (BuildContext context, int index) {
-                                  if (index == typeData.length) {
-                                    return addTypeMenuItem();
-                                  } else {
-                                    return menuItem(typeBean: typeData[index]);
-                                  }
+                                  return InkWell(
+                                    onTap: () {
+                                      widget.itemClick!({
+                                        "id": (index != typeData.length) ? typeData[index].id : -1,
+                                      });
+                                    },
+                                    child: (index == typeData.length) ? addTypeMenuItem() : menuItem(typeBean: typeData[index]),
+                                  );
                                 },
                               )),
-                        GestureDetector(
-                            onTap: () {
-                              if (_isExpanded) {
-                                _animationController.reverse();
-                              } else {
-                                _animationController.forward();
-                              }
-                            },
-                            child: AnimatedCrossFade(
-                                firstChild: Icon(
-                                  Icons.arrow_forward_ios_outlined,
-                                  size: 20,
-                                ),
-                                secondChild: Icon(
-                                  Icons.arrow_back_ios,
-                                  size: 20,
-                                ),
-                                crossFadeState: !_isExpanded ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-                                duration: Duration(milliseconds: 200))),
+
                       ],
                     )),
                   ],
@@ -136,12 +141,12 @@ class _SlideMenuViewState extends State<SlideMenuView> with SingleTickerProvider
   Widget menuItem({required TypeBean typeBean}) {
     return Container(
       padding: EdgeInsets.only(top: 10, bottom: 10),
-      child: Row(
+      child: Row( // 父级菜单
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.account_balance_wallet_outlined,
-            size: 20,
+            size: 30,
           ),
           if (_isExpanded) Text("${typeBean.name}"),
         ],
@@ -150,21 +155,17 @@ class _SlideMenuViewState extends State<SlideMenuView> with SingleTickerProvider
   }
 
   Widget addTypeMenuItem() {
-    return GestureDetector(onTap: (){
-
-
-    },child: Container(
+    return Container(
       padding: EdgeInsets.only(top: 10, bottom: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.add_circle_outlined,
-            size: 20,
+            size: 30,
           ),
           if (_isExpanded) Text("添加类型"),
         ],
-      ),
       ),
     );
   }

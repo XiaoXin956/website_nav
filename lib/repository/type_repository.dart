@@ -7,7 +7,67 @@ import 'package:website_nav/http/dio_manager.dart';
 
 import '../bean/result_bean.dart';
 
-class TypeRepository {
+abstract class ITypeRepository {
+  Future<dynamic> addTypeChild(dynamic map);
+
+  Future<dynamic> searchTypeChild(dynamic map);
+
+  Future<dynamic> updateTypeChild(dynamic map);
+
+  Future<dynamic> delTypeChild(dynamic map);
+
+  Future<dynamic> addTypeParent(dynamic map);
+
+  Future<dynamic> searchTypeParent(dynamic map);
+
+  Future<dynamic> updateTypeParent(dynamic map);
+
+  Future<dynamic> delTypeParent(dynamic map);
+}
+
+
+class TypeRepository extends ITypeRepository {
+
+
+  // 添加
+  Future<dynamic> addTypeChild(dynamic map) async {
+  }
+
+  // 查询
+  Future<dynamic> searchTypeChild(dynamic map) async {
+  }
+
+  // 更新
+  Future<dynamic> updateTypeChild(dynamic map) async {
+  }
+
+  // 修改
+  Future<dynamic> delTypeChild(dynamic map) async {
+
+  }
+
+
+  ///////////////// 父级
+
+  // 添加父级
+  Future<dynamic> addTypeParent(dynamic map) async {
+  }
+
+  // 查询
+  Future<dynamic> searchTypeParent(dynamic map) async {
+
+  }
+
+  // 更新
+  Future<dynamic> updateTypeParent(dynamic map) async {
+
+  }
+
+  // 修改
+  Future<dynamic> delTypeParent(dynamic map) async {
+
+  }
+
   Future<ResultBean> getSearchType(dynamic map) async {
     try {
       Response searchTypeRead = await DioManager.getInstant().post(

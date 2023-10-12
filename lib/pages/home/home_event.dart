@@ -14,8 +14,12 @@ class HomeInitEvent extends HomeEvent{
 
 class HomeGetTypeDataEvent extends HomeEvent{
 
+  final dynamic data;
 
-  HomeGetTypeDataEvent();
+  HomeGetTypeDataEvent({required this.data});
+
+  @override
+  List<Object?> get props => [data];
 
 }
 

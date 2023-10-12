@@ -18,7 +18,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     // 修改菜单打开缩小
     on<HomeGetTypeDataEvent>((event, emit) async {
       emit(HomeTypeLoadingState());
-      ResultBean resultBean = await typeRepository.getSearchType({});
+      ResultBean resultBean = await typeRepository.getSearchType(event.data);
       if (resultBean.code == 0) {
         emit(HomeTypeDataSuccessState(typeData: resultBean.data));
       } else {
