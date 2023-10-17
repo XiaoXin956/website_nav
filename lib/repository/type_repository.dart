@@ -8,64 +8,133 @@ import 'package:website_nav/http/dio_manager.dart';
 import '../bean/result_bean.dart';
 
 abstract class ITypeRepository {
-  Future<dynamic> addTypeChild(dynamic map);
+  Future<dynamic> addType(dynamic map);
+
+  Future<dynamic> updateType(dynamic map);
+
+  Future<dynamic> delType(dynamic map);
 
   Future<dynamic> searchTypeChild(dynamic map);
 
-  Future<dynamic> updateTypeChild(dynamic map);
-
-  Future<dynamic> delTypeChild(dynamic map);
-
-  Future<dynamic> addTypeParent(dynamic map);
-
   Future<dynamic> searchTypeParent(dynamic map);
-
-  Future<dynamic> updateTypeParent(dynamic map);
-
-  Future<dynamic> delTypeParent(dynamic map);
 }
 
-
 class TypeRepository extends ITypeRepository {
-
-
-  // 添加
-  Future<dynamic> addTypeChild(dynamic map) async {
+  // 添加子
+  Future<dynamic> addType(dynamic map) async {
+    dynamic addTypeRead = await DioManager.getInstant().post(
+      path: "${Config.baseUrl}/add_type",
+      data: map,
+      options: Options(
+        contentType: "application/json",
+        headers: {"Access-Control-Allow-Credentials": true, "Access-Control-Allow-Origin": "*"},
+      ),
+    );
+    dynamic dataRes = {};
+    if (addTypeRead.data is Map) {
+      dataRes = addTypeRead.data;
+    } else {
+      dataRes = json.decode(addTypeRead.data);
+    }
+    if (dataRes["code"] == "0") {
+      return ResultBean(code: int.parse(dataRes["code"]), msg: dataRes["msg"], data: null);
+    } else {
+      return ResultBean(code: dataRes["code"], msg: dataRes["msg"]);
+    }
   }
 
   // 查询
   Future<dynamic> searchTypeChild(dynamic map) async {
-  }
-
-  // 更新
-  Future<dynamic> updateTypeChild(dynamic map) async {
+    dynamic searchTypeRead = await DioManager.getInstant().post(
+      path: "${Config.baseUrl}/search_type",
+      data: map,
+      options: Options(
+        contentType: "application/json",
+        headers: {"Access-Control-Allow-Credentials": true, "Access-Control-Allow-Origin": "*"},
+      ),
+    );
+    dynamic dataRes = {};
+    if (searchTypeRead.data is Map) {
+      dataRes = searchTypeRead.data;
+    } else {
+      dataRes = json.decode(searchTypeRead.data);
+    }
+    if (dataRes["code"] == "0") {
+      return ResultBean(code: int.parse(dataRes["code"]), msg: dataRes["msg"], data: null);
+    } else {
+      return ResultBean(code: dataRes["code"], msg: dataRes["msg"]);
+    }
   }
 
   // 修改
-  Future<dynamic> delTypeChild(dynamic map) async {
-
+  Future<dynamic> updateType(dynamic map) async {
+    dynamic updateTypeRead = await DioManager.getInstant().post(
+      path: "${Config.baseUrl}/update_type",
+      data: map,
+      options: Options(
+        contentType: "application/json",
+        headers: {"Access-Control-Allow-Credentials": true, "Access-Control-Allow-Origin": "*"},
+      ),
+    );
+    dynamic dataRes = {};
+    if (updateTypeRead.data is Map) {
+      dataRes = updateTypeRead.data;
+    } else {
+      dataRes = json.decode(updateTypeRead.data);
+    }
+    if (dataRes["code"] == 0) {
+      return ResultBean(code: dataRes["code"], msg: dataRes["msg"], data: TypeBean.fromJson(dataRes['data']));
+    } else {
+      return ResultBean(code: dataRes["code"], msg: dataRes["msg"]);
+    }
   }
 
+  // 删除
+  Future<dynamic> delType(dynamic map) async {
+    dynamic delTypeRead = await DioManager.getInstant().post(
+      path: "${Config.baseUrl}/del_type",
+      data: map,
+      options: Options(
+        contentType: "application/json",
+        headers: {"Access-Control-Allow-Credentials": true, "Access-Control-Allow-Origin": "*"},
+      ),
+    );
+    dynamic dataRes = {};
+    if (delTypeRead.data is Map) {
+      dataRes = delTypeRead.data;
+    } else {
+      dataRes = json.decode(delTypeRead.data);
+    }
+    if (dataRes["code"] == "0") {
+      return ResultBean(code: int.parse(dataRes["code"]), msg: dataRes["msg"], data: null);
+    } else {
+      return ResultBean(code: dataRes["code"], msg: dataRes["msg"]);
+    }
+  }
 
   ///////////////// 父级
 
-  // 添加父级
-  Future<dynamic> addTypeParent(dynamic map) async {
-  }
-
   // 查询
   Future<dynamic> searchTypeParent(dynamic map) async {
-
-  }
-
-  // 更新
-  Future<dynamic> updateTypeParent(dynamic map) async {
-
-  }
-
-  // 修改
-  Future<dynamic> delTypeParent(dynamic map) async {
-
+    dynamic searchTypeRead = await DioManager.getInstant().post(
+      path: "${Config.baseUrl}/search_type",
+      data: map,
+      options: Options(
+        contentType: "application/json",
+        headers: {"Access-Control-Allow-Credentials": true, "Access-Control-Allow-Origin": "*"},
+      ),
+    );
+    dynamic dataRes = {};
+    if (searchTypeRead.data is Map) {
+      dataRes = searchTypeRead.data;
+    } else {
+      dataRes = json.decode(searchTypeRead.data);
+    }
+    if (dataRes["code"] == "0") {
+      return ResultBean(code: int.parse(dataRes["code"]), msg: dataRes["msg"], data: null);
+    } else {
+      return ResultBean(code: dataRes["code"], msg: dataRes["msg"]);
+    }
   }
 
   Future<ResultBean> getSearchType(dynamic map) async {
@@ -80,9 +149,9 @@ class TypeRepository extends ITypeRepository {
       } else {
         dataRes = json.decode(searchTypeRead.data);
       }
-      if (dataRes["code"] == "0") {
+      if (dataRes["code"] == 0) {
         List<TypeBean> data = (json.decode(dataRes['data']) as List<dynamic>).map((e) => TypeBean.fromJson(e)).toList();
-        return ResultBean(code: int.parse(dataRes["code"]), msg: dataRes["msg"], data: data);
+        return ResultBean(code: dataRes["code"], msg: dataRes["msg"], data: data);
       } else {
         return ResultBean(code: dataRes["code"], msg: dataRes["msg"]);
       }

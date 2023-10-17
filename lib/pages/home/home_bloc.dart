@@ -15,7 +15,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       printBlue("初始化");
       emit(HomeInitialState());
     });
-    // 修改菜单打开缩小
     on<HomeGetTypeDataEvent>((event, emit) async {
       emit(HomeTypeLoadingState());
       ResultBean resultBean = await typeRepository.getSearchType(event.data);

@@ -1,61 +1,80 @@
 abstract class LabelEvent {}
 
-class LabelInitEvent extends LabelEvent {
+class LabelTypeInitialEvent extends LabelEvent {
   @override
   List<Object?> get props => [];
 }
 
-class LabelChildAddEvent extends LabelEvent {
+class LabelTypeAddEvent extends LabelEvent {
   final dynamic data;
 
-  LabelChildAddEvent({required this.data});
+  LabelTypeAddEvent({required this.data});
 
   @override
   List<Object?> get props => [data];
 }
 
-class LabelChildUpdateEvent extends LabelEvent {
+class LabelTypeDelEvent extends LabelEvent {
   final dynamic data;
 
-  LabelChildUpdateEvent({required this.data});
+  LabelTypeDelEvent({required this.data});
 
   @override
   List<Object?> get props => [data];
 }
 
-class LabelChildDelEvent extends LabelEvent {
+class LabelTypeUpdateEvent extends LabelEvent {
   final dynamic data;
 
-  LabelChildDelEvent({required this.data});
+  LabelTypeUpdateEvent({required this.data});
 
   @override
   List<Object?> get props => [data];
 }
 
-////////////  父级
-class LabelParentAddEvent extends LabelEvent {
+class LabelChildSearchEvent extends LabelEvent{
+
   final dynamic data;
 
-  LabelParentAddEvent({required this.data});
+  LabelChildSearchEvent({required this.data});
 
   @override
   List<Object?> get props => [data];
+
 }
 
-class LabelParentUpdateEvent extends LabelEvent {
+class LabelParentSearchEvent extends LabelEvent{
+
   final dynamic data;
 
-  LabelParentUpdateEvent({required this.data});
+  LabelParentSearchEvent({required this.data});
 
   @override
   List<Object?> get props => [data];
+
 }
 
-class LabelParentDelEvent extends LabelEvent {
+// 查询所有
+class LabelTypeAllSearchEvent extends LabelEvent{
+
   final dynamic data;
 
-  LabelParentDelEvent({required this.data});
+  LabelTypeAllSearchEvent({required this.data});
 
   @override
   List<Object?> get props => [data];
+
 }
+
+// 查询所有
+class LabelTypeEditEvent extends LabelEvent{
+
+  bool? edit = false;
+
+  LabelTypeEditEvent({this.edit});
+
+  @override
+  List<Object?> get props => [edit];
+}
+
+

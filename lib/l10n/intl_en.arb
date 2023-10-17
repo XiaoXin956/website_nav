@@ -1,5 +1,8 @@
 {
   "knowledge": "Harbor of Knowledge",
   "language":"language",
-  "name": "name"
+  "name": "name",
+  "edit": "Edit",
+  "complete": "Complete"
+
 }

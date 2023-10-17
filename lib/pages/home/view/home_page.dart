@@ -5,6 +5,7 @@ import 'package:website_nav/generated/l10n.dart';
 import 'package:website_nav/pages/home/home_bloc.dart';
 import 'package:website_nav/pages/home/home_event.dart';
 import 'package:website_nav/pages/home/view/slide_menu_view.dart';
+import 'package:website_nav/pages/label/label_view.dart';
 import 'package:website_nav/utils/print_utils.dart';
 
 import '../home_state.dart';
@@ -75,7 +76,7 @@ class HomePage extends StatelessWidget {
 
   Widget sideMenuWidget(BuildContext context) {
     //侧边菜单
-    return SlideMenuView(
+    return LabelPage(
       itemClick: (data) {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Container(

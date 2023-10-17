@@ -1,5 +1,7 @@
 {
   "knowledge": "知识的港湾",
   "language":"语言",
-  "name": "名字"
+  "name": "名字",
+  "edit": "编辑",
+  "complete": "完成"
 }

@@ -37,7 +37,7 @@ class _SlideMenuViewState extends State<SlideMenuView> with SingleTickerProvider
         }
       });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      homeBloc?.add(HomeGetTypeDataEvent(data: {"language":"en","type":"all"}));
+      homeBloc?.add(HomeGetTypeDataEvent(data: {"language": null, "type": "all"}));
     });
   }
 
@@ -76,7 +76,6 @@ class _SlideMenuViewState extends State<SlideMenuView> with SingleTickerProvider
                 color: Colors.blue,
                 child: Column(
                   children: [
-
                     GestureDetector(
                         onTap: () {
                           if (_isExpanded) {
@@ -96,11 +95,10 @@ class _SlideMenuViewState extends State<SlideMenuView> with SingleTickerProvider
                             ),
                             crossFadeState: !_isExpanded ? CrossFadeState.showFirst : CrossFadeState.showSecond,
                             duration: Duration(milliseconds: 200))),
-
                     if (loadingError)
                       TextButton(
                         onPressed: () {
-                          context.read<HomeBloc>().add(HomeGetTypeDataEvent(data: {"language":"en","type":"all"}));
+                          context.read<HomeBloc>().add(HomeGetTypeDataEvent(data: {"language": "en", "type": "all"}));
                         },
                         child: Text('重新加載'),
                       ),
@@ -108,6 +106,7 @@ class _SlideMenuViewState extends State<SlideMenuView> with SingleTickerProvider
                         child: Row(
                       children: [
                         (loading)
+
                             ? Expanded(
                                 child: Row(
                                 children: [Expanded(child: SizedBox()), CircularProgressIndicator(), Expanded(child: SizedBox())],
@@ -120,16 +119,18 @@ class _SlideMenuViewState extends State<SlideMenuView> with SingleTickerProvider
                                   return InkWell(
                                     onTap: () {
                                       widget.itemClick!({
-                                        "id": (index != typeData.length) ? typeData[index].id : -1,
+                                        "id": typeData[index].id,
                                       });
                                     },
-                                    child: (index == typeData.length) ? addTypeMenuItem() : menuItem(typeBean: typeData[index]),
+                                    child:  menuItem(index: index, typeBean: typeData[index]),
                                   );
                                 },
                               )),
-
                       ],
                     )),
+
+                    Text("")
+
                   ],
                 ),
               );
@@ -138,35 +139,50 @@ class _SlideMenuViewState extends State<SlideMenuView> with SingleTickerProvider
     );
   }
 
-  Widget menuItem({required TypeBean typeBean}) {
+  Widget menuItem({required int index, required TypeBean typeBean}) {
     return Container(
-      padding: EdgeInsets.only(top: 10, bottom: 10),
-      child: Row( // 父级菜单
-        mainAxisAlignment: MainAxisAlignment.center,
+      padding: const EdgeInsets.only(top: 6, bottom: 6),
+      child: Column(
         children: [
-          Icon(
-            Icons.account_balance_wallet_outlined,
-            size: 30,
+          Row(
+            // 父级菜单
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.account_balance_wallet_outlined,
+                size: 30,
+              ),
+              if (_isExpanded) Text("${typeBean.name}"),
+            ],
           ),
-          if (_isExpanded) Text("${typeBean.name}"),
+          // 二级菜单
+          if (typeBean.childTypeData != null)
+            Column(
+              children: typeBean.childTypeData!.map((e) {
+                return InkWell(
+                  onTap: () {
+                    widget.itemClick!({
+                      "id": e?.id,
+                    });
+
+                  },
+                  child: Row(
+                    // 父级菜单
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.account_balance_wallet_outlined,
+                        size: 26,
+                      ),
+                      if (_isExpanded) Text("${e?.name}"),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
         ],
       ),
     );
   }
 
-  Widget addTypeMenuItem() {
-    return Container(
-      padding: EdgeInsets.only(top: 10, bottom: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.add_circle_outlined,
-            size: 30,
-          ),
-          if (_isExpanded) Text("添加类型"),
-        ],
-      ),
-    );
-  }
 }
