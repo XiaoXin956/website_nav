@@ -6,9 +6,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'package:website_nav/pages/home/home_bloc.dart';
 import 'package:website_nav/pages/label/label_bloc.dart';
+import 'package:website_nav/pages/login/login_bloc.dart';
 
 import 'generated/l10n.dart';
 import 'pages/home/view/home_page.dart';
+
+GlobalKey appGlobalKey = GlobalKey();
+
 
 void main() {
 
@@ -31,8 +35,10 @@ class MyApp extends StatelessWidget {
             providers: [
               BlocProvider(create: (context) => HomeBloc()),
               BlocProvider(create: (context) => LabelBloc()),
+              BlocProvider(create: (context) => LoginBloc()),
             ],
             child: MaterialApp(
+              key: appGlobalKey,
               debugShowCheckedModeBanner: false,
               theme: ThemeData(
                 colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),

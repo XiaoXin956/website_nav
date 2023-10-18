@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:website_nav/base/config.dart';
+import 'package:website_nav/bean/language_bean.dart';
 import 'package:website_nav/bean/type_bean.dart';
+import 'package:website_nav/pages/login/login_view.dart';
+import 'package:website_nav/widgets/triangle_indicator_painter.dart';
 
 // 确认 取消 按钮的弹框
 showDialogConfirmCancel({
@@ -55,8 +59,7 @@ showDialogConfirmCancel({
 
 // 编辑
 showDialogEdit({required BuildContext context, required TypeBean typeBean, Function(String)? submit}) {
-  TextEditingController _text = TextEditingController(text:typeBean.name );
-
+  TextEditingController _text = TextEditingController(text: typeBean.name);
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -99,4 +102,73 @@ showDialogEdit({required BuildContext context, required TypeBean typeBean, Funct
       );
     },
   );
+}
+
+// 语言选择
+showLanguageSelect({required BuildContext context, required Rect rect,required Function(LanguageBean) selectLanguage}) {
+  showDialog(
+    context: context,
+    barrierColor: Colors.transparent,
+    builder: (BuildContext context) {
+      return Stack(
+        children: [
+          Positioned(
+              top: rect.bottom + 40,
+              right: rect.left+10,
+              child: Column(
+                children: [
+                  // 绘制一个三角形
+                  CustomPaint(
+                    painter: TriangleIndicatorPainter(),
+                    child: Container(width: 10,height: 6,),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(color: Colors.white,
+                    borderRadius: BorderRadius.circular(5)),
+                    width: 100,
+                    child: Column(
+                      children: Config.languageData.map((e) {
+                        return Padding(
+                          padding: EdgeInsets.only(top: 5),
+                          child: GestureDetector(onTap: (){
+                            Navigator.pop(context);
+                            selectLanguage(e);
+                          },child: Column(
+                            children: [
+                              Text("${e.languageName}"),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Divider(
+                                color: Colors.grey,
+                              ),
+                            ],
+                          ),),
+                        );
+                      }).toList(),
+                    ),
+                  )
+                ],
+              ))
+        ],
+      );
+    },
+  );
+}
+
+
+showLogin({required BuildContext context}){
+
+  showDialog(context: context,
+    barrierColor: Colors.transparent,
+    builder: (BuildContext context) {
+    return Stack(
+      children: [
+        Center(
+          child: LoginPage(),
+        )
+      ],
+    );
+  },);
+
 }

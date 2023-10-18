@@ -8,18 +8,12 @@ abstract class HomeEvent extends Equatable{
 
 class HomeInitEvent extends HomeEvent{
 
+  final dynamic randomValue;
 
-  HomeInitEvent();
-}
-
-class HomeGetTypeDataEvent extends HomeEvent{
-
-  final dynamic data;
-
-  HomeGetTypeDataEvent({required this.data});
+  HomeInitEvent({required this.randomValue});
 
   @override
-  List<Object?> get props => [data];
+  List<Object?> get props => [randomValue];
 
 }
 

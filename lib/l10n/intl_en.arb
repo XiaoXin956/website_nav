@@ -1,8 +1,13 @@
 {
   "knowledge": "Harbor of Knowledge",
-  "language":"language",
-  "name": "name",
+  "language":"Language",
+  "name": "Name",
   "edit": "Edit",
-  "complete": "Complete"
+  "complete": "Complete",
+  "login": "Login",
+  "log_out": "LogOut",
+  "user_name": "UserName",
+  "password": "Password",
+  "reg": "Reg"
 
 }

@@ -20,6 +20,7 @@ class LabelPage extends StatefulWidget {
 }
 
 class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMixin {
+  int _expandedIndex = -1;
   late AnimationController _animationController;
   late Animation<double> _animation;
   double minValue = (kIsWeb) ? 120 : 60.0;
@@ -83,6 +84,10 @@ class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMix
           });
           loadingError = true;
           loading = false;
+        } else if (state is LabelTypeParentFoldState) {
+          // 编辑
+          _expandedIndex = state.index;
+          context.read<LabelBloc>().add(LabelTypeInitialEvent());
         } else if (state is LabelTypeEditState) {
           // 编辑
           _isEdit = !_isEdit;
@@ -164,6 +169,7 @@ class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMix
                           ),
                         InkWell(
                           onTap: () {
+                            _animationController.forward();
                             labelBloc?.add(LabelTypeEditEvent(edit: _isEdit));
                           },
                           child: Text(
@@ -189,87 +195,91 @@ class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMix
       padding: const EdgeInsets.only(top: 6, bottom: 6),
       child: Column(
         children: [
-          Row(
-            // 父级菜单
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Icon(
-                Icons.account_balance_wallet_outlined,
-                size: 30,
-              ),
-              if (_isExpanded)
-                Expanded(
-                  child: Text(
-                    "${typeBean.name}",
-                    maxLines: 1,
-                  ),
-                  flex: 1,
+          InkWell(
+            onTap: () {
+              labelBloc?.add(LabelTypeParentFoldEvent(index: index));
+            },
+            child: Row(
+              // 父级菜单
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.account_balance_wallet_outlined,
+                  size: 30,
                 ),
-              Row(
-                children: [
-                  if (_isEdit)
-                    InkWell(
-                      onTap: () {
-                        showDialogEdit(
-                            context: context,
-                            typeBean: typeBean,
-                            submit: (value) {
-                              Navigator.pop(context);
-                              labelBloc?.add(LabelTypeUpdateEvent(data: {"type": "parent", "id": typeBean.id, "name": value}));
-                            });
-                      },
-                      child: Icon(
-                        Icons.mode_edit_outline,
-                        color: Colors.red,
-                        size: 16,
-                      ),
+                if (_isExpanded)
+                  Expanded(
+                    child: Text(
+                      "${typeBean.name}",
+                      maxLines: 1,
                     ),
-                  SizedBox(
-                    width: 5,
+                    flex: 1,
                   ),
-                  if (_isEdit)
-                    InkWell(
-                      onTap: () {
-                        //删除
-                        showDialogConfirmCancel(
-                          context: context,
-                          title: Text("删除类型"),
-                          leftWidget: InkWell(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text("取消", style: TextStyle(fontSize: 16, color: Colors.black)),
-                          ),
-                          rightWidget: InkWell(
-                            onTap: () {
-                              Navigator.pop(context);
-                              // 父级菜单
-                              labelBloc?.add(LabelTypeDelEvent(data: {"id": typeBean.id, "type": "parent"}));
-                            },
-                            child: Text(
-                              "确认",
-                              style: TextStyle(fontSize: 16, color: Colors.red),
-                            ),
-                          ),
-                          content: Text("是否删除父菜单，关联的子菜单会一起删除"),
-                        );
-                      },
-                      child: Icon(
-                        Icons.cancel,
-                        color: Colors.red,
-                        size: 16,
+                Row(
+                  children: [
+                    if (_isEdit)
+                      InkWell(
+                        onTap: () {
+                          showDialogEdit(
+                              context: context,
+                              typeBean: typeBean,
+                              submit: (value) {
+                                Navigator.pop(context);
+                                labelBloc?.add(LabelTypeUpdateEvent(data: {"type": "parent", "id": typeBean.id, "name": value}));
+                              });
+                        },
+                        child: Icon(
+                          Icons.mode_edit_outline,
+                          color: Colors.red,
+                          size: 16,
+                        ),
                       ),
-                    )
-                ],
-              ),
-              SizedBox(
-                width: 6,
-              ),
-            ],
+                    SizedBox(
+                      width: 5,
+                    ),
+                    if (_isEdit)
+                      InkWell(
+                        onTap: () {
+                          //删除
+                          showDialogConfirmCancel(
+                            context: context,
+                            title: Text("删除类型"),
+                            leftWidget: InkWell(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text("取消", style: TextStyle(fontSize: 16, color: Colors.black)),
+                            ),
+                            rightWidget: InkWell(
+                              onTap: () {
+                                Navigator.pop(context);
+                                // 父级菜单
+                                labelBloc?.add(LabelTypeDelEvent(data: {"id": typeBean.id, "type": "parent"}));
+                              },
+                              child: Text(
+                                "确认",
+                                style: TextStyle(fontSize: 16, color: Colors.red),
+                              ),
+                            ),
+                            content: Text("是否删除父菜单，关联的子菜单会一起删除"),
+                          );
+                        },
+                        child: Icon(
+                          Icons.cancel,
+                          color: Colors.red,
+                          size: 16,
+                        ),
+                      )
+                  ],
+                ),
+                SizedBox(
+                  width: 6,
+                ),
+              ],
+            ),
           ),
-
           // 二级菜单
-          if (typeBean.childTypeData != null)
+          if (typeBean.childTypeData != null && _expandedIndex == index)
             Column(
               children: typeBean.childTypeData!.map((e) {
                 return InkWell(

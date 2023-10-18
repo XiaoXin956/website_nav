@@ -54,5 +54,9 @@ class LabelBloc extends Bloc<LabelEvent, LabelState> {
         emit(LabelTypeFailState(msgFail: "${resultBean.msg}"));
       }
     });
+    // 展开折叠
+    on<LabelTypeParentFoldEvent>((event, emit) async {
+        emit(LabelTypeParentFoldState(index: event.index));
+    });
   }
 }

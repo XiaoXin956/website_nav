@@ -3,8 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:website_nav/generated/l10n.dart';
 import 'package:website_nav/pages/home/home_bloc.dart';
-import 'package:website_nav/pages/home/home_event.dart';
-import 'package:website_nav/pages/home/view/slide_menu_view.dart';
+import 'package:website_nav/pages/home/view/top_page.dart';
 import 'package:website_nav/pages/label/label_view.dart';
 import 'package:website_nav/utils/print_utils.dart';
 
@@ -29,6 +28,7 @@ class HomePage extends StatelessWidget {
           printWhite("首頁");
         } else {}
 
+        var name = S.of(context).name;
         return _buildUI(context);
       },
     );
@@ -41,19 +41,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           children: [
             // 上方菜单
-            Container(
-              height: 100,
-              color: Colors.blue,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-
-                  Text("登录"),
-                  Text("注册"),
-
-                ],
-              ),
-            ),
+            TopPage(),
             // 下方
             Expanded(
               flex: 1,

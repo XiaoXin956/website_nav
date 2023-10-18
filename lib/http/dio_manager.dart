@@ -62,7 +62,7 @@ class DioManager {
       );
       return response;
     } on DioException catch (dioError) {
-      return dioError.response;
+      return {"code":dioError.response?.statusCode,"msg":"${dioError.message}"};
     } on Error catch (error) {
       return error;
     }
@@ -94,7 +94,7 @@ class DioManager {
       );
       return response;
     } on DioException catch (dioError) {
-      return dioError.response;
+      return {"code":dioError.response?.statusCode,"msg":"${dioError.message}"};
     } on Error catch (error) {
       return error;
     }
@@ -127,7 +127,7 @@ class DioManager {
       );
       return response;
     } on DioException catch (dioError) {
-      return dioError.response;
+      return {"code":dioError.response?.statusCode,"msg":"${dioError.message}"};
     } on Error catch (error) {
       return error;
     }

@@ -78,3 +78,15 @@ class LabelTypeEditEvent extends LabelEvent{
 }
 
 
+// 折叠操作
+class LabelTypeParentFoldEvent extends LabelEvent{
+
+  final dynamic index;
+
+  LabelTypeParentFoldEvent({this.index});
+
+  @override
+  List<Object?> get props => [index];
+}
+
+

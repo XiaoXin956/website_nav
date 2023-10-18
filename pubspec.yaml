@@ -38,6 +38,7 @@ dependencies:
   equatable:
   dio:
   flutter_screenutil:
+  shared_preferences: ^2.2.2
   easy_refresh:
   url_strategy:
 

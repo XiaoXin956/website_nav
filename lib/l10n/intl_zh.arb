@@ -3,5 +3,10 @@
   "language":"语言",
   "name": "名字",
   "edit": "编辑",
-  "complete": "完成"
+  "complete": "完成",
+  "login": "登录",
+  "log_out": "退出",
+  "user_name": "用户名",
+  "password": "密码",
+  "reg": "注册"
 }

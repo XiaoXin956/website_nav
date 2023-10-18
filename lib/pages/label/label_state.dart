@@ -43,6 +43,16 @@ class LabelTypeFailState extends LabelState{
 class LabelTypeAddSuccessState extends LabelState{
 
 }
+// 折叠状态
+class LabelTypeParentFoldState extends LabelState{
+
+  final dynamic index;
+
+  LabelTypeParentFoldState({this.index});
+
+  @override
+  List<Object?> get props => [index];
+}
 
 // 编辑
 class LabelTypeEditState extends LabelState{
