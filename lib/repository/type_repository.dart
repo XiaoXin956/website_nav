@@ -16,7 +16,8 @@ abstract class ITypeRepository {
 
   Future<dynamic> searchTypeChild(dynamic map);
 
-  Future<dynamic> searchTypeParent(dynamic map);
+  Future<dynamic> searchType(dynamic map);
+
 }
 
 class TypeRepository extends ITypeRepository {
@@ -112,32 +113,8 @@ class TypeRepository extends ITypeRepository {
     }
   }
 
-  ///////////////// 父级
 
-  // 查询
-  Future<dynamic> searchTypeParent(dynamic map) async {
-    dynamic searchTypeRead = await DioManager.getInstant().post(
-      path: "${Config.baseUrl}/search_type",
-      data: map,
-      options: Options(
-        contentType: "application/json",
-        headers: {"Access-Control-Allow-Credentials": true, "Access-Control-Allow-Origin": "*"},
-      ),
-    );
-    dynamic dataRes = {};
-    if (searchTypeRead.data is Map) {
-      dataRes = searchTypeRead.data;
-    } else {
-      dataRes = json.decode(searchTypeRead.data);
-    }
-    if (dataRes["code"] == "0") {
-      return ResultBean(code: int.parse(dataRes["code"]), msg: dataRes["msg"], data: null);
-    } else {
-      return ResultBean(code: dataRes["code"], msg: dataRes["msg"]);
-    }
-  }
-
-  Future<ResultBean> getSearchType(dynamic map) async {
+  Future<ResultBean> searchType(dynamic map) async {
     try {
       Response searchTypeRead = await DioManager.getInstant().post(
           path: "${Config.baseUrl}/search_type",

@@ -154,7 +154,7 @@ class PrintInterceptor extends InterceptorsWrapper {
   void onResponse(
       Response<dynamic> response, ResponseInterceptorHandler handler) {
     if (kDebugMode) {
-      printRed('''
+      printBlue('''
       打印拦截器 响应数据：状态Code：${response.statusCode}  状态数据：${response.statusMessage} \n 头部 ${response.headers} \n 数据：${response.data}
       ''');
     }
@@ -164,7 +164,7 @@ class PrintInterceptor extends InterceptorsWrapper {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     if (kDebugMode) {
-      printRed('''
+      printWhite('''
       打印拦截器 异常数据：$err
       ''');
     }

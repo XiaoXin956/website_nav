@@ -3,6 +3,7 @@ import 'package:website_nav/base/config.dart';
 import 'package:website_nav/bean/language_bean.dart';
 import 'package:website_nav/bean/type_bean.dart';
 import 'package:website_nav/pages/login/login_view.dart';
+import 'package:website_nav/utils/print_utils.dart';
 import 'package:website_nav/widgets/triangle_indicator_painter.dart';
 
 // 确认 取消 按钮的弹框
@@ -105,7 +106,7 @@ showDialogEdit({required BuildContext context, required TypeBean typeBean, Funct
 }
 
 // 语言选择
-showLanguageSelect({required BuildContext context, required Rect rect,required Function(LanguageBean) selectLanguage}) {
+showLanguageSelect({required BuildContext context, required Rect rect, required Function(LanguageBean) selectLanguage}) {
   showDialog(
     context: context,
     barrierColor: Colors.transparent,
@@ -114,36 +115,41 @@ showLanguageSelect({required BuildContext context, required Rect rect,required F
         children: [
           Positioned(
               top: rect.bottom + 40,
-              right: rect.left+10,
+              right: rect.left + 10,
               child: Column(
                 children: [
                   // 绘制一个三角形
                   CustomPaint(
                     painter: TriangleIndicatorPainter(),
-                    child: Container(width: 10,height: 6,),
+                    child: Container(
+                      width: 10,
+                      height: 6,
+                    ),
                   ),
                   Container(
-                    decoration: BoxDecoration(color: Colors.white,
-                    borderRadius: BorderRadius.circular(5)),
+                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5)),
                     width: 100,
                     child: Column(
                       children: Config.languageData.map((e) {
                         return Padding(
                           padding: EdgeInsets.only(top: 5),
-                          child: GestureDetector(onTap: (){
-                            Navigator.pop(context);
-                            selectLanguage(e);
-                          },child: Column(
-                            children: [
-                              Text("${e.languageName}"),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Divider(
-                                color: Colors.grey,
-                              ),
-                            ],
-                          ),),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              selectLanguage(e);
+                            },
+                            child: Column(
+                              children: [
+                                Text("${e.languageName}"),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Divider(
+                                  color: Colors.grey,
+                                ),
+                              ],
+                            ),
+                          ),
                         );
                       }).toList(),
                     ),
@@ -156,19 +162,68 @@ showLanguageSelect({required BuildContext context, required Rect rect,required F
   );
 }
 
-
-showLogin({required BuildContext context}){
-
-  showDialog(context: context,
+// 登录
+showLogin({required BuildContext context}) {
+  showDialog(
+    context: context,
     barrierColor: Colors.transparent,
     builder: (BuildContext context) {
-    return Stack(
-      children: [
-        Center(
-          child: LoginPage(),
-        )
-      ],
-    );
-  },);
+      return Stack(
+        children: [
+          Center(
+            child: LoginPage(),
+          )
+        ],
+      );
+    },
+  );
+}
 
+// 类型选择
+showTypeSelect({required BuildContext context, required Rect rect, required List<TypeBean> typeData, required Function(TypeBean) selectData}) {
+  showDialog(
+    context: context,
+    barrierColor: Colors.transparent,
+    builder: (BuildContext context) {
+      return Stack(
+        children: [
+          Center(
+              // top: rect.top,
+              // left: rect.left,
+              child: Container(
+                height: 300,
+                width: 200,
+                child: Column(
+                  children: [
+                    Expanded(
+                        child: Container(
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5),border: Border.all(color: Colors.red,width: 1)),
+                      child: GridView.builder(
+                        itemCount: typeData.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Padding(
+                            padding: EdgeInsets.only(top: 5),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                                selectData(typeData[index]);
+                              },
+                              child: Column(
+                                children: [
+                                  Text("${typeData[index].name}",style: TextStyle(fontSize: 15),),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisSpacing: 10, crossAxisSpacing: 10, childAspectRatio: 2),
+                      ),
+                    ))
+                  ],
+                ),
+              ))
+        ],
+      );
+    },
+  );
 }

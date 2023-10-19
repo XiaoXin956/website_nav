@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:website_nav/bean/result_bean.dart';
 import 'package:website_nav/repository/type_repository.dart';
+import 'package:website_nav/utils/date_tool.dart';
 import 'package:website_nav/utils/print_utils.dart';
 
 import 'label_event.dart';
@@ -11,8 +12,8 @@ class LabelBloc extends Bloc<LabelEvent, LabelState> {
 
   LabelBloc() : super(LabelTypeInitialState()) {
     on<LabelTypeInitialEvent>((event, emit) {
-      printBlue("初始化");
-      emit(LabelTypeInitialState());
+      printBlue("事件初始化");
+      emit(LabelTypeInitialState(randomValue: DateTool.timestamp()));
     });
     on<LabelTypeEditEvent>((event, emit) {
       printBlue("编辑");
@@ -20,9 +21,18 @@ class LabelBloc extends Bloc<LabelEvent, LabelState> {
     });
     on<LabelTypeAllSearchEvent>((event, emit) async {
       emit(LabelTypeLoadingState());
-      ResultBean resultBean = await typeRepository.getSearchType(event.data);
+      ResultBean resultBean = await typeRepository.searchType(event.data);
       if (resultBean.code == 0) {
-        emit(LabelTypeSearchSuccessState(typeData: resultBean.data));
+        emit(LabelTypeSearchSuccessState(type: "",typeData: resultBean.data));
+      } else {
+        emit(LabelTypeFailState(msgFail: "${resultBean.msg}"));
+      }
+    });
+    on<LabelParentSearchEvent>((event, emit) async {
+      emit(LabelTypeLoadingState());
+      ResultBean resultBean = await typeRepository.searchType(event.data);
+      if (resultBean.code == 0) {
+        emit(LabelTypeSearchSuccessState(type: "parent",typeData: resultBean.data));
       } else {
         emit(LabelTypeFailState(msgFail: "${resultBean.msg}"));
       }
@@ -45,18 +55,11 @@ class LabelBloc extends Bloc<LabelEvent, LabelState> {
         emit(LabelTypeFailState(msgFail: "${resultBean.msg}"));
       }
     });
-    // 添加
-    on<LabelTypeAddEvent>((event, emit) async {
-      ResultBean resultBean = await typeRepository.addType(event.data);
-      if (resultBean.code == 0) {
-        emit(LabelTypeSuccessState(msgSuccess: '添加成功'));
-      } else {
-        emit(LabelTypeFailState(msgFail: "${resultBean.msg}"));
-      }
-    });
+
     // 展开折叠
     on<LabelTypeParentFoldEvent>((event, emit) async {
         emit(LabelTypeParentFoldState(index: event.index));
     });
+
   }
 }

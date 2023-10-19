@@ -1,25 +1,27 @@
 import 'package:equatable/equatable.dart';
 import 'package:website_nav/bean/type_bean.dart';
 
-abstract class LabelState extends Equatable{
+abstract class LabelState extends Equatable {
   @override
   List<Object?> get props => [];
 }
 
-class LabelTypeInitialState extends LabelState{
+class LabelTypeInitialState extends LabelState {
+  dynamic randomValue;
 
-  LabelTypeInitialState();
+  LabelTypeInitialState({this.randomValue});
 
+  @override
+  List<Object?> get props => [randomValue];
 }
 
+// 加载中
 class LabelTypeLoadingState extends LabelState {
-
   LabelTypeLoadingState();
-
 }
 
 // 成功状态
-class LabelTypeSuccessState extends LabelState{
+class LabelTypeSuccessState extends LabelState {
   final String msgSuccess;
 
   LabelTypeSuccessState({required this.msgSuccess});
@@ -29,7 +31,7 @@ class LabelTypeSuccessState extends LabelState{
 }
 
 // 失败状态
-class LabelTypeFailState extends LabelState{
+class LabelTypeFailState extends LabelState {
   final String msgFail;
 
   LabelTypeFailState({required this.msgFail});
@@ -39,13 +41,8 @@ class LabelTypeFailState extends LabelState{
 }
 
 
-// 类型添加成功
-class LabelTypeAddSuccessState extends LabelState{
-
-}
 // 折叠状态
-class LabelTypeParentFoldState extends LabelState{
-
+class LabelTypeParentFoldState extends LabelState {
   final dynamic index;
 
   LabelTypeParentFoldState({this.index});
@@ -55,8 +52,7 @@ class LabelTypeParentFoldState extends LabelState{
 }
 
 // 编辑
-class LabelTypeEditState extends LabelState{
-
+class LabelTypeEditState extends LabelState {
   bool? edit = false;
 
   LabelTypeEditState({this.edit});
@@ -65,10 +61,15 @@ class LabelTypeEditState extends LabelState{
   List<Object?> get props => [edit];
 }
 
+
+
+
+// 查询
 class LabelTypeSearchSuccessState extends LabelState {
+  final String type;
   final List<TypeBean> typeData;
 
-  LabelTypeSearchSuccessState({required this.typeData});
+  LabelTypeSearchSuccessState({required this.typeData, required this.type});
 
   @override
   List<Object?> get props => [typeData];

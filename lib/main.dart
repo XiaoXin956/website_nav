@@ -5,6 +5,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'package:website_nav/pages/home/home_bloc.dart';
+import 'package:website_nav/pages/knowledge_edit/knowledge_bloc.dart';
+import 'package:website_nav/pages/knowledge_edit/knowledge_view.dart';
 import 'package:website_nav/pages/label/label_bloc.dart';
 import 'package:website_nav/pages/login/login_bloc.dart';
 
@@ -36,6 +38,7 @@ class MyApp extends StatelessWidget {
               BlocProvider(create: (context) => HomeBloc()),
               BlocProvider(create: (context) => LabelBloc()),
               BlocProvider(create: (context) => LoginBloc()),
+              BlocProvider(create: (context) => KnowledgeBloc()),
             ],
             child: MaterialApp(
               key: appGlobalKey,
@@ -55,6 +58,21 @@ class MyApp extends StatelessWidget {
                 Locale("zh"),
                 Locale("en"),
               ],
+
+              onGenerateRoute: (settings){
+                String urlName = settings.name.toString();
+                if(urlName=='/'){//首页
+                  return MaterialPageRoute(builder: (BuildContext context) {
+                    return HomePage();
+                  });
+                }else if(urlName=='/add_data'){
+                  return MaterialPageRoute(builder: (BuildContext context) {
+                    return KnowledgePage();
+                  });
+                }
+
+              },
+
             ));
       },
     );

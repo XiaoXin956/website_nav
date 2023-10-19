@@ -203,10 +203,12 @@ class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMix
               // 父级菜单
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                SizedBox(width: 5,),
                 Icon(
                   Icons.account_balance_wallet_outlined,
                   size: 30,
                 ),
+                SizedBox(width: 5,),
                 if (_isExpanded)
                   Expanded(
                     child: Text(

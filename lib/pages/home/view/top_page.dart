@@ -7,6 +7,7 @@ import 'package:website_nav/helper/app_shared_pref.dart';
 import 'package:website_nav/pages/dialog/dialog_widgets.dart';
 import 'package:website_nav/pages/home/home_bloc.dart';
 import 'package:website_nav/pages/home/home_event.dart';
+import 'package:website_nav/pages/knowledge_edit/knowledge_view.dart';
 import 'package:website_nav/pages/login/login_bloc.dart';
 import 'package:website_nav/pages/login/login_event.dart';
 import 'package:website_nav/pages/login/login_state.dart';
@@ -14,6 +15,7 @@ import 'package:website_nav/utils/date_tool.dart';
 import 'package:website_nav/utils/print_utils.dart';
 import 'package:website_nav/utils/snack_bar_utils.dart';
 import 'package:website_nav/utils/sp_utils.dart';
+import 'dart:html' as html;
 
 class TopPage extends StatefulWidget {
   const TopPage({super.key});
@@ -74,7 +76,13 @@ class _TopPageState extends State<TopPage> {
               // 知识新增页面
               InkWell(
                 onTap: () {
-                  showSnackBar(msg: "新增");
+                  // String url = "http://${html.window.location.host}/add_data";
+                  // html.window.open(url,"_blank");
+
+                  Navigator.push(context, MaterialPageRoute(builder: (context){
+                    return KnowledgePage();
+                  }));
+                  
                 },
                 child: Text(
                   "添加数据",
@@ -138,6 +146,7 @@ class _TopPageState extends State<TopPage> {
                       size: 20,
                       color: Colors.blue,
                     ),
+                    SizedBox(width: 5,),
                     Text(
                       "${S.of(context).language_select}",
                       style: TextStyle(fontSize: 20),
