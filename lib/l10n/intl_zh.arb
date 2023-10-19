@@ -8,5 +8,6 @@
   "log_out": "退出",
   "user_name": "用户名",
   "password": "密码",
-  "reg": "注册"
+  "reg": "注册",
+  "language_select": "语言选择"
 }

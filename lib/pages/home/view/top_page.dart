@@ -139,7 +139,7 @@ class _TopPageState extends State<TopPage> {
                       color: Colors.blue,
                     ),
                     Text(
-                      "语言切换",
+                      "${S.of(context).language_select}",
                       style: TextStyle(fontSize: 20),
                     ),
                   ],
