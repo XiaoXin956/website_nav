@@ -71,10 +71,19 @@ class LabelTypeSearchSuccessState extends KnowledgeState {
 }
 
 
-class LabelTypeSelectState extends KnowledgeState {
+class LabelTypeSelectParentState extends KnowledgeState {
   final TypeBean? typeBean;
 
-  LabelTypeSelectState({required this.typeBean});
+  LabelTypeSelectParentState({required this.typeBean});
+
+  @override
+  List<Object?> get props => [typeBean];
+}
+
+class LabelTypeSelectChildState extends KnowledgeState {
+  final TypeBean? typeBean;
+
+  LabelTypeSelectChildState({required this.typeBean});
 
   @override
   List<Object?> get props => [typeBean];

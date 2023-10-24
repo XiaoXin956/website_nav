@@ -9,5 +9,8 @@
   "user_name": "用户名",
   "password": "密码",
   "reg": "注册",
-  "language_select": "语言选择"
+  "language_select": "语言选择",
+  "one_menu": "一级菜单",
+  "two_menu": "二级菜单",
+  "type": "类型"
 }

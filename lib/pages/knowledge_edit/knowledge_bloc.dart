@@ -11,7 +11,6 @@ class KnowledgeBloc extends Bloc<KnowledgeEvent, KnowledgeState> {
 
   KnowledgeBloc() : super(KnowledgeState()) {
     on<KnowledgeInitEvent>((event, emit){});
-
     // 添加
     on<LabelTypeAddEvent>((event, emit) async {
       ResultBean resultBean = await typeRepository.addType(event.data);
@@ -21,11 +20,15 @@ class KnowledgeBloc extends Bloc<KnowledgeEvent, KnowledgeState> {
         emit(LabelTypeFailState(msgFail: "${resultBean.msg}"));
       }
     });
-    // 选择类型
-    on<LabelTypeSelectEvent>((event, emit) async {
-      emit(LabelTypeSelectState(typeBean: event.typeBean));
+    // 选择一级类型
+    on<LabelTypeSelectParentEvent>((event, emit) async {
+      emit(LabelTypeSelectParentState(typeBean: event.typeBean));
     });
     // 选择类型
+    on<LabelTypeSelectChildEvent>((event, emit) async {
+      emit(LabelTypeSelectChildState(typeBean: event.typeBean));
+    });
+    // 查询类型
     on<LabelSearchEvent>((event, emit) async {
       ResultBean resultBean = await typeRepository.searchType(event.data);
       if (resultBean.code == 0) {

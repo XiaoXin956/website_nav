@@ -42,12 +42,23 @@ class LabelTypeAddEvent extends KnowledgeEvent {
 }
 
 
-// 选择类型
-class LabelTypeSelectEvent extends KnowledgeEvent {
+// 选择一级类型
+class LabelTypeSelectParentEvent extends KnowledgeEvent {
 
   TypeBean? typeBean;
 
-  LabelTypeSelectEvent({this.typeBean});
+  LabelTypeSelectParentEvent({this.typeBean});
+
+  @override
+  List<Object?> get props => [typeBean];
+}
+
+// 选择二级类型
+class LabelTypeSelectChildEvent extends KnowledgeEvent {
+
+  TypeBean? typeBean;
+
+  LabelTypeSelectChildEvent({this.typeBean});
 
   @override
   List<Object?> get props => [typeBean];

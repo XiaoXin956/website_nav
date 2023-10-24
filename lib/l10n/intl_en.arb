@@ -9,6 +9,8 @@
   "user_name": "UserName",
   "password": "Password",
   "reg": "Reg",
-  "language_select": "Language Select"
-
+  "language_select": "Language Select",
+  "one_menu": "one menu",
+  "two_menu": "two menu",
+  "type": "type"
 }
