@@ -191,37 +191,36 @@ showTypeSelect({required BuildContext context, required Rect rect, required List
               // top: rect.top,
               // left: rect.left,
               child: Container(
-                height: 300,
-                width: 200,
-                child: Column(
-                  children: [
-                    Expanded(
-                        child: Container(
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5),border: Border.all(color: Colors.red,width: 1)),
-                      child: GridView.builder(
-                        itemCount: typeData.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Padding(
-                            padding: EdgeInsets.only(top: 5),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
-                                selectData(typeData[index]);
-                              },
-                              child: Column(
-                                children: [
-                                  Text("${typeData[index].name}",style: TextStyle(fontSize: 15),),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisSpacing: 10, crossAxisSpacing: 10, childAspectRatio: 2),
-                      ),
-                    ))
-                  ],
-                ),
-              ))
+            height: 300,
+            width: 200,
+            child: Column(
+              children: [
+                Expanded(
+                    child: Container(
+                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.red, width: 1)),
+                  child: GridView.builder(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisSpacing: 10, crossAxisSpacing: 10, childAspectRatio: 2),
+                    itemCount: typeData.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Padding(
+                        padding: EdgeInsets.only(top: 5),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                            selectData(typeData[index]);
+                          },
+                          child: Container(child: Text(
+                            "${typeData[index].name}",
+                            style: TextStyle(fontSize: 15,decoration: TextDecoration.none),
+                          ),alignment: Alignment.center,),
+                        ),
+                      );
+                    },
+                  ),
+                ))
+              ],
+            ),
+          ))
         ],
       );
     },

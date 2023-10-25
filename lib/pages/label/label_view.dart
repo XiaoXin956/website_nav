@@ -31,7 +31,7 @@ class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMix
   bool loadingError = false;
   List<TypeBean> typeData = [];
   LabelBloc? labelBloc;
-  dynamic allMap = {"language": null, "type": "all"};
+  dynamic allMap = { "type": "all"};
 
   @override
   void initState() {
@@ -143,9 +143,7 @@ class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMix
                                 itemBuilder: (BuildContext context, int index) {
                                   return InkWell(
                                     onTap: () {
-                                      widget.itemClick!({
-                                        "id": typeData[index].id,
-                                      });
+                                      widget.itemClick!(typeData[index]);
                                     },
                                     child: menuItem(index: index, typeBean: typeData[index]),
                                   );
@@ -286,9 +284,7 @@ class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMix
               children: typeBean.childTypeData!.map((e) {
                 return InkWell(
                   onTap: () {
-                    widget.itemClick!({
-                      "id": e?.id,
-                    });
+                    widget.itemClick!(e);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,

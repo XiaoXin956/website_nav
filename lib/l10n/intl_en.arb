@@ -12,5 +12,7 @@
   "language_select": "Language Select",
   "one_menu": "one menu",
   "two_menu": "two menu",
-  "type": "type"
+  "type": "type",
+  "edit_data": "Edit data",
+  "please_select": "Please select"
 }

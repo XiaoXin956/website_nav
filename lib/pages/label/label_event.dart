@@ -7,8 +7,6 @@ class LabelTypeInitialEvent extends LabelEvent {
   List<Object?> get props => [];
 }
 
-
-
 class LabelTypeDelEvent extends LabelEvent {
   final dynamic data;
 

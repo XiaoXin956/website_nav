@@ -12,5 +12,7 @@
   "language_select": "语言选择",
   "one_menu": "一级菜单",
   "two_menu": "二级菜单",
-  "type": "类型"
+  "type": "类型",
+  "edit_data": "编辑数据",
+  "please_select": "请选择"
 }

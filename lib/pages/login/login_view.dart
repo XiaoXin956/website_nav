@@ -45,21 +45,20 @@ class LoginPage extends StatelessWidget {
 
   Widget _buildPage(BuildContext context) {
     return Material(
-      color: Colors.transparent,
       child: Container(
         padding: EdgeInsets.all(5),
         height: 300,
-        width: 300,
+        width: 500,
         decoration: BoxDecoration(
-          color: Colors.white,
           borderRadius: BorderRadius.circular(10),
+          border: Border.all(width: 1,color: Colors.black)
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(height: 10),
-            Text("登录"),
+            Text("${S.of(context).login}"),
             SizedBox(
               height: 14,
             ),
