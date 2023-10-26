@@ -20,7 +20,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(
       builder: (context, state) {
-        loginBloc = BlocProvider.of<LoginBloc>(context);
+        loginBloc = context.read<LoginBloc>();
         if (state is LoginInitState) {
 
         } else if (state is LoginLoadingState) {
@@ -45,11 +45,13 @@ class LoginPage extends StatelessWidget {
 
   Widget _buildPage(BuildContext context) {
     return Material(
+      color: Colors.transparent,
       child: Container(
         padding: EdgeInsets.all(5),
         height: 300,
         width: 500,
         decoration: BoxDecoration(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(width: 1,color: Colors.black)
         ),
@@ -137,10 +139,8 @@ class LoginPage extends StatelessWidget {
                     child: Text("${S.of(context).reg}")),
               ],
             ),
-
             if(msg!='')
               Text(msg),
-
             SizedBox(height: 10),
           ],
         ),

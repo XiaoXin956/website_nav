@@ -40,17 +40,6 @@ class LabelTypeFailState extends LabelState {
   List<Object?> get props => [msgFail];
 }
 
-
-// 折叠状态
-class LabelTypeParentFoldState extends LabelState {
-  final dynamic index;
-
-  LabelTypeParentFoldState({this.index});
-
-  @override
-  List<Object?> get props => [index];
-}
-
 // 编辑
 class LabelTypeEditState extends LabelState {
   bool? edit = false;
@@ -61,9 +50,6 @@ class LabelTypeEditState extends LabelState {
   List<Object?> get props => [edit];
 }
 
-
-
-
 // 查询
 class LabelTypeSearchSuccessState extends LabelState {
   final String type;
@@ -73,4 +59,29 @@ class LabelTypeSearchSuccessState extends LabelState {
 
   @override
   List<Object?> get props => [typeData];
+}
+
+
+class LabelInitial extends LabelState {}
+
+class LabelZoomState extends LabelState {
+
+  dynamic randomValue;
+
+  LabelZoomState({this.randomValue});
+
+  @override
+  List<Object?> get props => [randomValue];
+}
+
+class LabelSelectIndexState extends LabelState {
+
+  final int index;
+  final TypeBean typeBean;
+
+  LabelSelectIndexState({required this.index, required this.typeBean});
+
+  @override
+  List<Object?> get props => [index,typeBean];
+
 }

@@ -70,15 +70,6 @@ class LabelTypeSearchSuccessState extends KnowledgeState {
   List<Object?> get props => [typeData];
 }
 
-class LabelTypeSelectParentState extends KnowledgeState {
-  final TypeBean? typeBean;
-
-  LabelTypeSelectParentState({required this.typeBean});
-
-  @override
-  List<Object?> get props => [typeBean];
-}
-
 class LabelTypeSelectChildState extends KnowledgeState {
   final TypeBean? typeBean;
 
@@ -95,4 +86,11 @@ class KnowledgeSearchDataState extends KnowledgeState{
   KnowledgeSearchDataState({required this.knowData});
   @override
   List<Object?> get props => [knowData];
+}
+
+class KnowledgeEditTypeState extends KnowledgeState{
+  dynamic randomValue;
+  KnowledgeEditTypeState({this.randomValue});
+  @override
+  List<Object?> get props => [randomValue];
 }

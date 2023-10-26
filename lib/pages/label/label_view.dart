@@ -4,6 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:website_nav/bean/type_bean.dart';
 import 'package:website_nav/generated/l10n.dart';
 import 'package:website_nav/pages/dialog/dialog_widgets.dart';
+import 'package:website_nav/pages/home/home_bloc.dart';
+import 'package:website_nav/pages/home/home_event.dart';
+import 'package:website_nav/pages/knowledge_edit/knowledge_event.dart';
+import 'package:website_nav/pages/label/label_cubit.dart';
 import 'package:website_nav/utils/print_utils.dart';
 
 import 'label_bloc.dart';
@@ -20,43 +24,36 @@ class LabelPage extends StatefulWidget {
 }
 
 class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMixin {
-  int _expandedIndex = -1;
-  late AnimationController _animationController;
-  late Animation<double> _animation;
   double minValue = (kIsWeb) ? 120 : 60.0;
   double maxValue = (kIsWeb) ? 230 : 150.0;
-  bool _isExpanded = false;
+  bool _isExpanded = true;
   bool loading = false;
   bool _isEdit = false;
   bool loadingError = false;
   List<TypeBean> typeData = [];
-  LabelBloc? labelBloc;
-  dynamic allMap = { "type": "all"};
+
+  // LabelBloc? labelBloc;
+  LabelCubit? labelCubit;
+  dynamic allMap = {"type": "all"};
+
+  int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 100));
-    _animation = Tween(begin: minValue, end: maxValue).animate(_animationController)
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          _isExpanded = true;
-        } else if (status == AnimationStatus.dismissed) {
-          _isExpanded = false;
-          _isEdit = false;
-        }
-      });
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      labelBloc?.add(LabelTypeAllSearchEvent(data: allMap));
+      // labelBloc?.add(LabelTypeAllSearchEvent(data: allMap));
+      labelCubit?.searchAllType(allMap);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LabelBloc, LabelState>(
+    return BlocBuilder<LabelCubit, LabelState>(
       builder: (BuildContext context, state) {
-        labelBloc = context.read<LabelBloc>();
-        if (state is LabelTypeInitialState) {
+        labelCubit = context.read<LabelCubit>();
+        if (state is LabelInitial) {
           // 加载中
           printBlue("恢復");
         } else if (state is LabelTypeLoadingState) {
@@ -68,9 +65,8 @@ class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMix
           typeData.addAll(state.typeData);
           loading = false;
           loadingError = false;
-          context.read<LabelBloc>().add(LabelTypeInitialEvent());
         } else if (state is LabelTypeSuccessState) {
-          labelBloc?.add(LabelTypeAllSearchEvent(data: allMap));
+          // labelBloc?.add(LabelTypeAllSearchEvent(data: allMap));
           loadingError = true;
           loading = false;
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -84,106 +80,120 @@ class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMix
           });
           loadingError = true;
           loading = false;
-        } else if (state is LabelTypeParentFoldState) {
-          // 编辑
-          _expandedIndex = state.index;
-          context.read<LabelBloc>().add(LabelTypeInitialEvent());
-        } else if (state is LabelTypeEditState) {
-          // 编辑
-          _isEdit = !_isEdit;
-          context.read<LabelBloc>().add(LabelTypeInitialEvent());
+        } else if (state is LabelSelectIndexState) {
+          _selectedIndex = state.index;
+        } else if (state is LabelZoomState) {
+          _isExpanded = !_isExpanded;
+          labelCubit?.init();
         }
-        return AnimatedBuilder(
-            animation: _animation,
-            builder: (context, child) {
-              return Container(
-                width: _animation.value,
-                height: double.maxFinite,
-                color: Colors.white,
-                child: Column(
-                  children: [
-                    GestureDetector(
-                        onTap: () {
-                          if (_isExpanded) {
-                            _animationController.reverse();
-                          } else {
-                            _animationController.forward();
-                          }
-                        },
-                        child: AnimatedCrossFade(
-                            firstChild: Icon(
-                              Icons.menu,
-                              size: 30,
-                            ),
-                            secondChild: Icon(
-                              Icons.arrow_back,
-                              size: 30,
-                            ),
-                            crossFadeState: !_isExpanded ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-                            duration: Duration(milliseconds: 200))),
-                    if (loadingError)
-                      TextButton(
-                        onPressed: () {
-                          context.read<LabelBloc>().add(LabelTypeAllSearchEvent(data: allMap));
-                        },
-                        child: Text('重新加載'),
-                      ),
-                    Expanded(
-                        child: Row(
-                      children: [
-                        (loading)
-                            ? Expanded(
-                                child: Row(
-                                children: [Expanded(child: SizedBox()), CircularProgressIndicator(), Expanded(child: SizedBox())],
-                              ))
-                            : Expanded(
-                                child: ListView.builder(
-                                padding: EdgeInsets.zero,
-                                itemCount: typeData.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return InkWell(
-                                    onTap: () {
-                                      widget.itemClick!(typeData[index]);
-                                    },
-                                    child: menuItem(index: index, typeBean: typeData[index]),
-                                  );
-                                },
-                              )),
-                      ],
-                    )),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        if (!loading)
-                          InkWell(
-                            onTap: () {
-                              labelBloc?.add(LabelTypeAllSearchEvent(data: allMap));
-                            },
-                            child: Icon(
-                              Icons.refresh,
-                              size: 25,
-                              color: Colors.blue,
-                            ),
-                          ),
-                        InkWell(
-                          onTap: () {
-                            _animationController.forward();
-                            labelBloc?.add(LabelTypeEditEvent(edit: _isEdit));
-                          },
-                          child: Text(
-                            (_isEdit) ? S.of(context).complete : S.of(context).edit,
-                            style: TextStyle(fontSize: 20),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    )
-                  ],
+        return AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          width: _isExpanded ? 300.0 : 56.0,
+          child: Drawer(
+            width: _isExpanded ? maxValue : minValue,
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    labelCubit?.zoom();
+                  },
+                  child: _isExpanded ? Icon(Icons.arrow_back) : Icon(Icons.menu),
                 ),
-              );
-            });
+                (loading)
+                    ? Expanded(
+                        child: Row(
+                        children: [Expanded(child: SizedBox()), CircularProgressIndicator(), Expanded(child: SizedBox())],
+                      ))
+                    : Expanded(
+                        flex: 1,
+                        child: ListView.builder(
+                          padding: EdgeInsets.zero,
+                          itemCount: typeData.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return InkWell(
+                              onTap: () {
+                                widget.itemClick!(typeData[index]);
+                              },
+
+                              child: menuItem(index: index, typeBean: typeData[index]),
+                            );
+                          },
+                        )),
+                if (loadingError)
+                  TextButton(
+                    onPressed: () {
+                      context.read<LabelCubit>().searchAllType(allMap);
+                    },
+                    child: Text('重新加載'),
+                  ),
+              ],
+            ),
+          ),
+        );
+        return Container(
+          height: double.maxFinite,
+          color: Colors.white,
+          child: Column(
+            children: [
+              if (loadingError)
+                TextButton(
+                  onPressed: () {
+                    context.read<LabelBloc>().add(LabelTypeAllSearchEvent(data: allMap));
+                  },
+                  child: Text('重新加載'),
+                ),
+              Expanded(
+                  child: Row(
+                children: [
+                  (loading)
+                      ? Expanded(
+                          child: Row(
+                          children: [Expanded(child: SizedBox()), CircularProgressIndicator(), Expanded(child: SizedBox())],
+                        ))
+                      : Expanded(
+                          child: ListView.builder(
+                          padding: EdgeInsets.zero,
+                          itemCount: typeData.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return InkWell(
+                              onTap: () {
+                                widget.itemClick!(typeData[index]);
+                              },
+                              child: menuItem(index: index, typeBean: typeData[index]),
+                            );
+                          },
+                        )),
+                ],
+              )),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  if (!loading)
+                    InkWell(
+                      onTap: () {
+                        // labelBloc?.add(LabelTypeAllSearchEvent(data: allMap));
+                      },
+                      child: Icon(
+                        Icons.refresh,
+                        size: 25,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  InkWell(
+                    onTap: () {},
+                    child: Text(
+                      (_isEdit) ? S.of(context).complete : S.of(context).edit,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              )
+            ],
+          ),
+        );
       },
     );
   }
@@ -191,188 +201,29 @@ class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMix
   Widget menuItem({required int index, required TypeBean typeBean}) {
     return Container(
       padding: const EdgeInsets.only(top: 6, bottom: 6),
-      child: Column(
+      child: Row(
+        // 父级菜单
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          InkWell(
-            onTap: () {
-              labelBloc?.add(LabelTypeParentFoldEvent(index: index));
-            },
-            child: Row(
-              // 父级菜单
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(width: 5,),
-                Icon(
-                  Icons.account_balance_wallet_outlined,
-                  size: 30,
-                ),
-                SizedBox(width: 5,),
-                if (_isExpanded)
-                  Expanded(
-                    child: Text(
-                      "${typeBean.name}",
-                      maxLines: 1,
-                    ),
-                    flex: 1,
-                  ),
-                Row(
-                  children: [
-                    if (_isEdit)
-                      InkWell(
-                        onTap: () {
-                          showDialogEdit(
-                              context: context,
-                              typeBean: typeBean,
-                              submit: (value) {
-                                Navigator.pop(context);
-                                labelBloc?.add(LabelTypeUpdateEvent(data: {"type": "parent", "id": typeBean.id, "name": value}));
-                              });
-                        },
-                        child: Icon(
-                          Icons.mode_edit_outline,
-                          color: Colors.red,
-                          size: 16,
-                        ),
-                      ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    if (_isEdit)
-                      InkWell(
-                        onTap: () {
-                          //删除
-                          showDialogConfirmCancel(
-                            context: context,
-                            title: Text("删除类型"),
-                            leftWidget: InkWell(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text("取消", style: TextStyle(fontSize: 16, color: Colors.black)),
-                            ),
-                            rightWidget: InkWell(
-                              onTap: () {
-                                Navigator.pop(context);
-                                // 父级菜单
-                                labelBloc?.add(LabelTypeDelEvent(data: {"id": typeBean.id, "type": "parent"}));
-                              },
-                              child: Text(
-                                "确认",
-                                style: TextStyle(fontSize: 16, color: Colors.red),
-                              ),
-                            ),
-                            content: Text("是否删除父菜单，关联的子菜单会一起删除"),
-                          );
-                        },
-                        child: Icon(
-                          Icons.cancel,
-                          color: Colors.red,
-                          size: 16,
-                        ),
-                      )
-                  ],
-                ),
-                SizedBox(
-                  width: 6,
-                ),
-              ],
-            ),
+          SizedBox(
+            width: 5,
           ),
-          // 二级菜单
-          if (typeBean.childTypeData != null && _expandedIndex == index)
-            Column(
-              children: typeBean.childTypeData!.map((e) {
-                return InkWell(
-                  onTap: () {
-                    widget.itemClick!(e);
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Icon(
-                        Icons.account_balance_wallet_outlined,
-                        size: 26,
-                      ),
-                      if (_isExpanded)
-                        Expanded(
-                          child: Text(
-                            "${e?.name}",
-                            maxLines: 1,
-                          ),
-                          flex: 1,
-                        ),
-                      Row(
-                        children: [
-                          if (_isEdit)
-                            InkWell(
-                              onTap: () {
-                                showDialogEdit(
-                                    context: context,
-                                    typeBean: e!,
-                                    submit: (value) {
-                                      Navigator.pop(context);
-                                      labelBloc?.add(LabelTypeUpdateEvent(data: {
-                                        "type": "child",
-                                        "id": e.id,
-                                        "name": value,
-                                        "parent_id": e.parentId,
-                                      }));
-                                    });
-                              },
-                              child: Icon(
-                                Icons.mode_edit_outline,
-                                color: Colors.red,
-                                size: 16,
-                              ),
-                            ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          if (_isEdit)
-                            InkWell(
-                              onTap: () {
-                                showDialogConfirmCancel(
-                                  context: context,
-                                  title: Text("删除类型"),
-                                  leftWidget: InkWell(
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text("取消", style: TextStyle(fontSize: 16, color: Colors.black)),
-                                  ),
-                                  rightWidget: InkWell(
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      // 父级菜单
-                                      labelBloc?.add(LabelTypeDelEvent(data: {"id": e?.id, "type": "child"}));
-                                    },
-                                    child: Text(
-                                      "确认",
-                                      style: TextStyle(fontSize: 16, color: Colors.red),
-                                    ),
-                                  ),
-                                  content: Text("是否删除子类型"),
-                                );
-                              },
-                              child: Icon(
-                                Icons.cancel,
-                                color: Colors.grey,
-                                size: 16,
-                              ),
-                            )
-                        ],
-                      ),
-                      SizedBox(
-                        width: 6,
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
+          Icon(
+            Icons.account_balance_wallet_outlined,
+            size: 30,
+          ),
+          SizedBox(
+            width: 5,
+          ),
+          if (_isExpanded)
+            Expanded(
+              child: Text(
+                "${typeBean.name}",
+                maxLines: 1,
+              ),
+              flex: 1,
             ),
+
         ],
       ),
     );

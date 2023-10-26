@@ -91,21 +91,7 @@ class HomePage extends StatelessWidget {
     //侧边菜单
     return LabelPage(
       itemClick: (data) {
-
         context.read<ClickCubit>().moveToPosition(data);
-
-        // context.read<HomeBloc>().add(HomeMoveToPositionEvent(typeBean: data));
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Container(
-            padding: EdgeInsets.only(top: 20, bottom: 20),
-            child: Text(
-              "当前选中${data.id}",
-              style: TextStyle(color: Colors.red),
-            ),
-          ),
-          backgroundColor: Colors.white,
-        ));
       },
     );
   }
