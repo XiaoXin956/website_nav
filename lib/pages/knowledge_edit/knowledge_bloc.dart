@@ -69,8 +69,6 @@ class KnowledgeBloc extends Bloc<KnowledgeEvent, KnowledgeState> {
                 .map((e) => KnowledgeBean.fromJson(e))
                 .toList(),};
         }).toList();
-
-
         emit(KnowledgeSearchDataState(knowData:result));
       } else {
         emit(KnowledgeFailState(msgFail: "${resultBean.msg}"));
@@ -83,10 +81,7 @@ class KnowledgeBloc extends Bloc<KnowledgeEvent, KnowledgeState> {
 
     });
 
-    // 滑动到指定位置
-    on<KnowledgeMoveToPositionEvent>((event, emit){
-      emit(KnowledgeMoveToPositionState(typeBean: event.typeBean));
-    });
+
   }
 
 

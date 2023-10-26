@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:website_nav/bean/type_bean.dart';
 import 'package:website_nav/generated/l10n.dart';
+import 'package:website_nav/pages/home/bloc/click_cubit.dart';
 import 'package:website_nav/pages/home/home_bloc.dart';
+import 'package:website_nav/pages/home/home_event.dart';
 import 'package:website_nav/pages/home/view/content_page.dart';
 import 'package:website_nav/pages/home/view/top_page.dart';
 import 'package:website_nav/pages/knowledge_edit/knowledge_bloc.dart';
@@ -29,6 +31,7 @@ class HomePage extends StatelessWidget {
     );
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (context) => ClickCubit()),
         BlocProvider(create: (context) => HomeBloc()),
         BlocProvider(create: (context) => KnowledgeBloc()..add(KnowledgeSearchDataEvent(map: {"type":"search"}))),
       ],
@@ -88,7 +91,10 @@ class HomePage extends StatelessWidget {
     //侧边菜单
     return LabelPage(
       itemClick: (data) {
-        context.read<KnowledgeBloc>().add(KnowledgeMoveToPositionEvent(typeBean: data));
+
+        context.read<ClickCubit>().moveToPosition(data);
+
+        // context.read<HomeBloc>().add(HomeMoveToPositionEvent(typeBean: data));
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Container(

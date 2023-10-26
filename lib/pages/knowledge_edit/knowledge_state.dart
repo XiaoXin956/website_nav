@@ -96,11 +96,3 @@ class KnowledgeSearchDataState extends KnowledgeState{
   @override
   List<Object?> get props => [knowData];
 }
-
-class KnowledgeMoveToPositionState extends KnowledgeState{
-
-  final TypeBean typeBean;
-  KnowledgeMoveToPositionState({required this.typeBean});
-  @override
-  List<Object?> get props => [typeBean];
-}

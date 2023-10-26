@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:website_nav/bean/knowledge_bean.dart';
 import 'package:website_nav/bean/type_bean.dart';
+import 'package:website_nav/pages/home/bloc/click_cubit.dart';
 import 'package:website_nav/pages/knowledge_edit/knowledge_bloc.dart';
 import 'package:website_nav/pages/knowledge_edit/knowledge_event.dart';
 import 'package:website_nav/pages/knowledge_edit/knowledge_state.dart';
@@ -18,25 +19,31 @@ class ContentPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<KnowledgeBloc, KnowledgeState>(
+    return BlocBuilder<ClickCubit, ClickState>(
       builder: (BuildContext context, state) {
-        knowledgeBloc = context.read<KnowledgeBloc>();
+        if (state is ClickInitial) {
+          // 什么都不做
 
-        if (state is KnowledgeSearchDataState) {
-          // 查询成功，显示
-          knowData = state.knowData;
-          itemKeys.clear();
-          itemKeys = List.generate(knowData.length, (index) => GlobalKey());
-
-        }else  if (state is KnowledgeMoveToPositionState) {
+        }else if (state is ClickMoveToPositionState) {
           // 查询成功，显示
           print("滑动  ${state.typeBean}");
-            context.read<KnowledgeBloc>().add(KnowledgeInitEvent());
+          context.read<ClickCubit>().clickInitial();
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             checkPosition(state.typeBean);
-
-
+          });
         }
-        return _buildUI();
+        return BlocBuilder<KnowledgeBloc, KnowledgeState>(
+          builder: (BuildContext context, state) {
+            knowledgeBloc = context.read<KnowledgeBloc>();
+            if (state is KnowledgeSearchDataState) {
+              // 查询成功，显示
+              knowData = state.knowData;
+              itemKeys.clear();
+              itemKeys = List.generate(knowData.length, (index) => GlobalKey());
+            }
+            return _buildUI();
+          },
+        );
       },
     );
   }
@@ -103,18 +110,17 @@ class ContentPage extends StatelessWidget {
       ),
     );
   }
-  
-  checkPosition(TypeBean typeBean){
 
+  checkPosition(TypeBean typeBean) {
     // knowData.firstWhere((element) => false)
 
-    var indexWhere = knowData.indexWhere((element){
-      return element['type_bean'].id==typeBean.id;
+    var indexWhere = knowData.indexWhere((element) {
+      return element['type_bean'].id == typeBean.id;
     });
 
     double height = 0;
     // 把之前的累加起来
-    for(var i=0;i<indexWhere;i++){
+    for (var i = 0; i < indexWhere; i++) {
       RenderBox itemBox = itemKeys[i].currentContext!.findRenderObject() as RenderBox;
       double itemPosition = itemBox.size.height;
       height = height + itemPosition;
@@ -126,6 +132,4 @@ class ContentPage extends StatelessWidget {
       curve: Curves.easeInOut,
     );
   }
-  
-  
 }

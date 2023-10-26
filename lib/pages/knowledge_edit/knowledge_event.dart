@@ -60,11 +60,3 @@ class KnowledgeSearchDataEvent extends KnowledgeEvent{
 }
 
 
-class KnowledgeMoveToPositionEvent extends KnowledgeEvent{
-
-  final TypeBean typeBean;
-  KnowledgeMoveToPositionEvent({required this.typeBean});
-  @override
-  List<Object?> get props => [typeBean];
-
-}
