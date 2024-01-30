@@ -21,11 +21,6 @@ class LabelPage extends StatefulWidget {
 
 class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMixin {
   int _expandedIndex = -1;
-  late AnimationController _animationController;
-  late Animation<double> _animation;
-  double minValue = (kIsWeb) ? 120 : 60.0;
-  double maxValue = (kIsWeb) ? 230 : 150.0;
-  bool _isExpanded = false;
   bool loading = false;
   bool _isEdit = false;
   bool loadingError = false;
@@ -36,16 +31,7 @@ class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMix
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 100));
-    _animation = Tween(begin: minValue, end: maxValue).animate(_animationController)
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          _isExpanded = true;
-        } else if (status == AnimationStatus.dismissed) {
-          _isExpanded = false;
-          _isEdit = false;
-        }
-      });
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       labelBloc?.add(LabelTypeAllSearchEvent(data: allMap));
     });
@@ -93,97 +79,73 @@ class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMix
           _isEdit = !_isEdit;
           context.read<LabelBloc>().add(LabelTypeInitialEvent());
         }
-        return AnimatedBuilder(
-            animation: _animation,
-            builder: (context, child) {
-              return Container(
-                width: _animation.value,
-                height: double.maxFinite,
-                color: Colors.white,
-                child: Column(
-                  children: [
-                    GestureDetector(
-                        onTap: () {
-                          if (_isExpanded) {
-                            _animationController.reverse();
-                          } else {
-                            _animationController.forward();
-                          }
-                        },
-                        child: AnimatedCrossFade(
-                            firstChild: Icon(
-                              Icons.menu,
-                              size: 30,
-                            ),
-                            secondChild: Icon(
-                              Icons.arrow_back,
-                              size: 30,
-                            ),
-                            crossFadeState: !_isExpanded ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-                            duration: Duration(milliseconds: 200))),
-                    if (loadingError)
-                      TextButton(
-                        onPressed: () {
-                          context.read<LabelBloc>().add(LabelTypeAllSearchEvent(data: allMap));
-                        },
-                        child: Text('重新加載'),
-                      ),
-                    Expanded(
-                        child: Row(
-                      children: [
-                        (loading)
-                            ? Expanded(
-                                child: Row(
-                                children: [Expanded(child: SizedBox()), CircularProgressIndicator(), Expanded(child: SizedBox())],
-                              ))
-                            : Expanded(
-                                child: ListView.builder(
-                                padding: EdgeInsets.zero,
-                                itemCount: typeData.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return InkWell(
-                                    onTap: () {
-                                      widget.itemClick!(typeData[index]);
-                                    },
-                                    child: menuItem(index: index, typeBean: typeData[index]),
-                                  );
-                                },
-                              )),
-                      ],
-                    )),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        if (!loading)
-                          InkWell(
-                            onTap: () {
-                              labelBloc?.add(LabelTypeAllSearchEvent(data: allMap));
-                            },
-                            child: Icon(
-                              Icons.refresh,
-                              size: 25,
-                              color: Colors.blue,
-                            ),
-                          ),
-                        InkWell(
-                          onTap: () {
-                            _animationController.forward();
-                            labelBloc?.add(LabelTypeEditEvent(edit: _isEdit));
-                          },
-                          child: Text(
-                            (_isEdit) ? S.of(context).complete : S.of(context).edit,
-                            style: TextStyle(fontSize: 20),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    )
-                  ],
+        return Container(
+          width: 200,
+          height: double.maxFinite,
+          color: Colors.white,
+          child: Column(
+            children: [
+              if (loadingError)
+                TextButton(
+                  onPressed: () {
+                    context.read<LabelBloc>().add(LabelTypeAllSearchEvent(data: allMap));
+                  },
+                  child: Text('重新加載'),
                 ),
-              );
-            });
+              Expanded(
+                  child: Row(
+                    children: [
+                      (loading)
+                          ? Expanded(
+                          child: Row(
+                            children: [Expanded(child: SizedBox()), CircularProgressIndicator(), Expanded(child: SizedBox())],
+                          ))
+                          : Expanded(
+                          child: ListView.builder(
+                            padding: EdgeInsets.zero,
+                            itemCount: typeData.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return InkWell(
+                                onTap: () {
+                                  widget.itemClick!(typeData[index]);
+                                },
+                                child: menuItem(index: index, typeBean: typeData[index]),
+                              );
+                            },
+                          )),
+                    ],
+                  )),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  if (!loading)
+                    InkWell(
+                      onTap: () {
+                        labelBloc?.add(LabelTypeAllSearchEvent(data: allMap));
+                      },
+                      child: Icon(
+                        Icons.refresh,
+                        size: 25,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  InkWell(
+                    onTap: () {
+                      labelBloc?.add(LabelTypeEditEvent(edit: _isEdit));
+                    },
+                    child: Text(
+                      (_isEdit) ? S.of(context).complete : S.of(context).edit,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              )
+            ],
+          ),
+        );
       },
     );
   }
@@ -207,7 +169,6 @@ class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMix
                   size: 30,
                 ),
                 SizedBox(width: 5,),
-                if (_isExpanded)
                   Expanded(
                     child: Text(
                       "${typeBean.name}",
@@ -296,7 +257,6 @@ class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMix
                         Icons.account_balance_wallet_outlined,
                         size: 26,
                       ),
-                      if (_isExpanded)
                         Expanded(
                           child: Text(
                             "${e?.name}",
