@@ -53,22 +53,3 @@ class LabelTypeAllSearchEvent extends LabelEvent {
   List<Object?> get props => [data];
 }
 
-// 编辑
-class LabelTypeEditEvent extends LabelEvent {
-  bool? edit = false;
-
-  LabelTypeEditEvent({this.edit});
-
-  @override
-  List<Object?> get props => [edit];
-}
-
-// 折叠操作
-class LabelTypeParentFoldEvent extends LabelEvent {
-  final dynamic index;
-
-  LabelTypeParentFoldEvent({this.index});
-
-  @override
-  List<Object?> get props => [index];
-}

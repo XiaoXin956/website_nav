@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:website_nav/bean/type_bean.dart';
 
 abstract class HomeState extends Equatable {
   @override

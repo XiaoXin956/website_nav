@@ -14,6 +14,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeInitEvent>((event, emit) {
       emit(HomeInitialState(randomValue: DateTool.timestamp()));
     });
+    // // 滑动到指定位置
+    // on<HomeMoveToPositionEvent>((event, emit){
+    //   emit(HomeMoveToPositionState(typeBean: event.typeBean));
+    // });
 
   }
 }

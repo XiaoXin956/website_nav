@@ -25,15 +25,8 @@ class LabelTypeAddEvent extends KnowledgeEvent {
   List<Object?> get props => [data];
 }
 
-// 选择一级类型
-class LabelTypeSelectParentEvent extends KnowledgeEvent {
-  TypeBean? typeBean;
-  LabelTypeSelectParentEvent({this.typeBean});
-  @override
-  List<Object?> get props => [typeBean];
-}
 
-// 选择二级类型
+// 选择类型
 class LabelTypeSelectChildEvent extends KnowledgeEvent {
   TypeBean? typeBean;
   LabelTypeSelectChildEvent({this.typeBean});
@@ -51,20 +44,24 @@ class LabelSearchEvent extends KnowledgeEvent {
 
 // 查询资源
 class KnowledgeSearchDataEvent extends KnowledgeEvent{
-
   final dynamic map;
   KnowledgeSearchDataEvent({required this.map});
   @override
   List<Object?> get props => [map];
-
 }
 
 
-class KnowledgeMoveToPositionEvent extends KnowledgeEvent{
+// 编辑类型
+class KnowledgeEditTypeEvent extends KnowledgeEvent{
 
-  final TypeBean typeBean;
-  KnowledgeMoveToPositionEvent({required this.typeBean});
+}
+
+class KnowledgeDelTypeEvent extends KnowledgeEvent{
+  final dynamic data;
+
+  KnowledgeDelTypeEvent({required this.data});
+
   @override
-  List<Object?> get props => [typeBean];
-
+  List<Object?> get props => [data];
 }
+

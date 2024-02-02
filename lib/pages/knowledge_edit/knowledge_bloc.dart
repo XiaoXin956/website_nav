@@ -6,6 +6,7 @@ import 'package:website_nav/bean/result_bean.dart';
 import 'package:website_nav/bean/type_bean.dart';
 import 'package:website_nav/repository/knowledge_repository.dart';
 import 'package:website_nav/repository/type_repository.dart';
+import 'package:website_nav/utils/date_tool.dart';
 
 import 'knowledge_event.dart';
 import 'knowledge_state.dart';
@@ -27,10 +28,6 @@ class KnowledgeBloc extends Bloc<KnowledgeEvent, KnowledgeState> {
       } else {
         emit(LabelTypeFailState(msgFail: "${resultBean.msg}"));
       }
-    });
-    // 选择一级类型
-    on<LabelTypeSelectParentEvent>((event, emit) async {
-      emit(LabelTypeSelectParentState(typeBean: event.typeBean));
     });
     // 选择类型
     on<LabelTypeSelectChildEvent>((event, emit) async {
@@ -69,24 +66,24 @@ class KnowledgeBloc extends Bloc<KnowledgeEvent, KnowledgeState> {
                 .map((e) => KnowledgeBean.fromJson(e))
                 .toList(),};
         }).toList();
-
-
         emit(KnowledgeSearchDataState(knowData:result));
       } else {
         emit(KnowledgeFailState(msgFail: "${resultBean.msg}"));
       }
-      // 获取成功
-
-      // 成功
-
-      // 失败
-
     });
 
-    // 滑动到指定位置
-    on<KnowledgeMoveToPositionEvent>((event, emit){
-      emit(KnowledgeMoveToPositionState(typeBean: event.typeBean));
+    on<KnowledgeEditTypeEvent>((event, emit){
+      emit(KnowledgeEditTypeState(randomValue: DateTool.timestamp()));
     });
+    on<KnowledgeDelTypeEvent>((event, emit) async {
+      ResultBean resultBean = await typeRepository.delType(event.data);
+      if (resultBean.code == 0) {
+        emit(KnowledgeSuccessState(msgSuccess: '${resultBean.msg}'));
+      } else {
+        emit(KnowledgeFailState(msgFail: "${resultBean.msg}"));
+      }
+    });
+
   }
 
 

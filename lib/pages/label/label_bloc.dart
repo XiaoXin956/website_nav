@@ -15,10 +15,7 @@ class LabelBloc extends Bloc<LabelEvent, LabelState> {
       printBlue("事件初始化");
       emit(LabelTypeInitialState(randomValue: DateTool.timestamp()));
     });
-    on<LabelTypeEditEvent>((event, emit) {
-      printBlue("编辑");
-      emit(LabelTypeEditState(edit: event.edit));
-    });
+
     on<LabelTypeAllSearchEvent>((event, emit) async {
       emit(LabelTypeLoadingState());
       ResultBean resultBean = await typeRepository.searchType(event.data);
@@ -54,11 +51,6 @@ class LabelBloc extends Bloc<LabelEvent, LabelState> {
       } else {
         emit(LabelTypeFailState(msgFail: "${resultBean.msg}"));
       }
-    });
-
-    // 展开折叠
-    on<LabelTypeParentFoldEvent>((event, emit) async {
-        emit(LabelTypeParentFoldState(index: event.index));
     });
 
   }

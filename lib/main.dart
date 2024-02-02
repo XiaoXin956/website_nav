@@ -8,6 +8,7 @@ import 'package:website_nav/pages/home/home_bloc.dart';
 import 'package:website_nav/pages/knowledge_edit/knowledge_bloc.dart';
 import 'package:website_nav/pages/knowledge_edit/knowledge_view.dart';
 import 'package:website_nav/pages/label/label_bloc.dart';
+import 'package:website_nav/pages/label/label_cubit.dart';
 import 'package:website_nav/pages/login/login_bloc.dart';
 
 import 'generated/l10n.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
         return MultiBlocProvider(
             providers: [
               BlocProvider(create: (context) => LabelBloc()),
+              BlocProvider(create: (context) => LabelCubit()),
               BlocProvider(create: (context) => LoginBloc()),
             ],
             child: MaterialApp(
