@@ -43,9 +43,26 @@ class KnowledgeRepository extends IKnowledgeRepository{
 
 
   @override
-  Future delKnowledge(map) {
-    // TODO: implement delKnowledge
-    throw UnimplementedError();
+  Future delKnowledge(map) async {
+    dynamic addTypeRead = await DioManager.getInstant().post(
+      path: "${Config.baseUrl}/knowledge",
+      data: map,
+      options: Options(
+        contentType: "application/json",
+        headers: {"Access-Control-Allow-Credentials": true, "Access-Control-Allow-Origin": "*"},
+      ),
+    );
+    dynamic dataRes = {};
+    if (addTypeRead.data is Map) {
+      dataRes = addTypeRead.data;
+    } else {
+      dataRes = json.decode(addTypeRead.data);
+    }
+    if (dataRes["code"] == 0) {
+      return ResultBean(code: dataRes["code"], msg: dataRes["msg"], data: null);
+    } else {
+      return ResultBean(code: dataRes["code"], msg: dataRes["msg"]);
+    }
   }
 
   @override

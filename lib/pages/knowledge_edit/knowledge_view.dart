@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:website_nav/bean/type_bean.dart';
 import 'package:website_nav/generated/l10n.dart';
-import 'package:website_nav/pages/dialog/dialog_widgets.dart';
+import 'package:website_nav/pages/knowledge_edit/knowledge_cubit.dart';
 import 'package:website_nav/pages/knowledge_edit/knowledge_event.dart';
-import 'package:website_nav/pages/label/label_bloc.dart';
-import 'package:website_nav/pages/label/label_event.dart';
-import 'package:website_nav/utils/print_utils.dart';
+import 'package:website_nav/pages/label/label_cubit.dart';
 import 'package:website_nav/widgets/fixed_size_grid_delegate.dart';
 
-import 'knowledge_bloc.dart';
 import 'knowledge_state.dart';
 
 // 编辑页面
@@ -21,7 +18,7 @@ class KnowledgePage extends StatefulWidget {
 }
 
 class _KnowledgePageState extends State<KnowledgePage> {
-  KnowledgeBloc? knowledgeBloc;
+  KnowledgeCubit? knowledgeCubit;
   TypeBean? selectChildValue;
 
   String oneMenuName = "";
@@ -40,73 +37,84 @@ class _KnowledgePageState extends State<KnowledgePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      knowledgeBloc?.add(LabelSearchEvent(data: {"type": "child"}));
+      knowledgeCubit?.reqSearchType(data: {"type": "child"});
+      // knowledgeBloc?.add(LabelSearchEvent(data: {"type": "child"}));
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => KnowledgeBloc(),
-      child: BlocBuilder<KnowledgeBloc, KnowledgeState>(
-        builder: (BuildContext context, state) {
-          knowledgeBloc = context.read<KnowledgeBloc>();
-          if (state is KnowledgeInitState) {
-            // 初始化
-            // _textEditingController.text = "";
-            // _urlEditingController.text = "";
-            // _labelEditingController.text = "";
-            // _describeEditingController.text = "";
-          } else if (state is LabelTypeSelectChildState) {
-            selectChildValue = state.typeBean;
-          } else if (state is LabelTypeFailState) {
-            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-              ScaffoldMessenger.of(context).clearSnackBars();
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msgFail)));
-            });
-          } else if (state is LabelTypeSearchSuccessState) {
-            context.read<LabelBloc>().add(LabelTypeAllSearchEvent(data: {"type": "all"}));
-            // 获取成功
-            typeChildData.clear();
-            typeChildData.addAll(state.typeData);
-          } else if (state is LabelTypeAddSuccessState) {
-            //  添加成功
-            // 一级刷新数据
-            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-              ScaffoldMessenger.of(context).clearSnackBars();
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msgSuccess)));
-            });
-            // 获取成功
-            knowledgeBloc?.add(LabelSearchEvent(data: {"type": "child"}));
-          } else if (state is KnowledgeAddSuccessState) {
-            knowledgeBloc?.add(KnowledgeInitEvent());
-            // 资源添加成功
-            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-              ScaffoldMessenger.of(context).clearSnackBars();
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msgSuccess)));
-            });
-          } else if (state is KnowledgeFailState) {
-            // 资源添加成功
-            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-              ScaffoldMessenger.of(context).clearSnackBars();
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msgFail)));
-            });
-          }else if (state is KnowledgeEditTypeState) {
-            // 编辑类型
-            _edit = !_edit;
+    return BlocBuilder<KnowledgeCubit, KnowledgeState>(
+      builder: (BuildContext context, state) {
+        knowledgeCubit = context.read<KnowledgeCubit>();
+        if (state is KnowledgeInitState) {
+          // 初始化
+          // _textEditingController.text = "";
+          // _urlEditingController.text = "";
+          // _labelEditingController.text = "";
+          // _describeEditingController.text = "";
+        } else if (state is LabelTypeSelectChildState) {
+          selectChildValue = state.typeBean;
+        } else if (state is LabelTypeFailState) {
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            ScaffoldMessenger.of(context).clearSnackBars();
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msgFail)));
+          });
+        } else if (state is LabelTypeSearchSuccessState) {
+          context.read<LabelCubit>().reqSearchLabel({"type": "all"});
+          // context.read<KnowledgeCubit>().add(KnowledgeSearchDataEvent(map: {"type":"search"}));
+          context.read<KnowledgeCubit>().reqSearchAllKnowledgeData(data: {"type": "search"});
 
-            knowledgeBloc?.add(KnowledgeInitEvent());
-          }else if (state is KnowledgeSuccessState) {
+          // 获取成功
+          typeChildData.clear();
+          typeChildData.addAll(state.typeData);
+        } else if (state is LabelTypeAddSuccessState) {
+          context.read<LabelCubit>().searchAllType({"type": "all"});
+          // context.read<KnowledgeBloc>().add(KnowledgeSearchDataEvent(map: {"type":"search"}));
+          context.read<KnowledgeCubit>().reqSearchAllKnowledgeData(data: {"type": "search"});
+          //  添加成功
+          // 一级刷新数据
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            ScaffoldMessenger.of(context).clearSnackBars();
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msgSuccess)));
+          });
+          // 获取成功
+          // knowledgeCubit?.add(LabelSearchEvent(data: {"type": "child"}));
+          knowledgeCubit?.reqSearchType(data: {"type": "child"});
+        } else if (state is KnowledgeAddSuccessState) {
+          context.read<LabelCubit>().searchAllType({"type": "all"});
+          context.read<KnowledgeCubit>().reqSearchAllKnowledgeData(data: {"type": "search"});
 
-            knowledgeBloc?.add(LabelSearchEvent(data: {"type": "child"}));
-            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-              ScaffoldMessenger.of(context).clearSnackBars();
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msgSuccess)));
-            });
-          }
-          return _buildPage(context);
-        },
-      ),
+          knowledgeCubit?.reqKnowledgeInit();
+          // knowledgeCubit?.add(KnowledgeInitEvent());
+          // 资源添加成功
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            ScaffoldMessenger.of(context).clearSnackBars();
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msgSuccess)));
+          });
+        } else if (state is KnowledgeFailState) {
+          // 资源添加成功
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            ScaffoldMessenger.of(context).clearSnackBars();
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msgFail)));
+          });
+        } else if (state is KnowledgeEditTypeState) {
+          // 编辑类型
+          _edit = !_edit;
+          // knowledgeCubit?.add(KnowledgeInitEvent());
+          knowledgeCubit?.reqKnowledgeInit();
+        } else if (state is KnowledgeSuccessState) {
+          context.read<LabelCubit>().searchAllType({"type": "all"});
+          // context.read<KnowledgeCubit>().add(KnowledgeSearchDataEvent(map: {"type":"search"}));
+          // knowledgeCubit?.add(LabelSearchEvent(data: {"type": "child"}));
+          knowledgeCubit?.reqSearchType(data: {"type": "child"});
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            ScaffoldMessenger.of(context).clearSnackBars();
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msgSuccess)));
+          });
+        }
+        return _buildPage(context);
+      },
     );
   }
 
@@ -177,10 +185,14 @@ class _KnowledgePageState extends State<KnowledgePage> {
                               ),
                               ElevatedButton(
                                   onPressed: () {
-                                    knowledgeBloc?.add(LabelTypeAddEvent(data: {
+                                    // knowledgeCubit?.add(LabelTypeAddEvent(data: {
+                                    //   "type": "child",
+                                    //   "name": twoMenuName,
+                                    // }));
+                                    knowledgeCubit?.reqKnowledgeTypeAdd(data: {
                                       "type": "child",
                                       "name": twoMenuName,
-                                    }));
+                                    });
                                   },
                                   child: Text("新增菜单")),
                             ],
@@ -212,10 +224,11 @@ class _KnowledgePageState extends State<KnowledgePage> {
                                       InkWell(
                                         onTap: () {
                                           // 进行编辑操作
-                                          knowledgeBloc?.add(KnowledgeEditTypeEvent());
+                                          // knowledgeCubit?.add(KnowledgeEditTypeEvent(isEdit: _edit));
+                                          knowledgeCubit?.editType(isEdit: _edit);
                                         },
                                         child: Text(
-                                          (_edit)?"${S.of(context).complete}":"${S.of(context).edit}",
+                                          (_edit) ? "${S.of(context).complete}" : "${S.of(context).edit}",
                                           style: TextStyle(color: Colors.blue),
                                         ),
                                       )
@@ -236,11 +249,13 @@ class _KnowledgePageState extends State<KnowledgePage> {
                                           height: double.maxFinite,
                                           child: GestureDetector(
                                             onTap: () {
-                                              knowledgeBloc?.add(LabelTypeSelectChildEvent(typeBean: typeChildData[index]));
+                                              // knowledgeCubit?.add(LabelTypeSelectChildEvent(typeBean: typeChildData[index]));
+                                              knowledgeCubit?.selectKnowledgeType(typeBean: typeChildData[index]);
                                             },
                                             child: Container(
                                               height: 60,
                                               width: 60,
+                                              padding: EdgeInsets.only(left: 6, right: 6),
                                               decoration: BoxDecoration(
                                                   borderRadius: BorderRadius.circular(10),
                                                   color: (selectChildValue != null && selectChildValue!.id == selectValueTemp.id) ? Colors.blue : Colors.white,
@@ -265,19 +280,23 @@ class _KnowledgePageState extends State<KnowledgePage> {
                                             ),
                                           ),
                                         ),
-                                        if(_edit)
-                                          Positioned(
-                                              right: 0,
-                                              top: 0,
-                                              child: GestureDetector(
-                                                onTap: (){
-                                                  knowledgeBloc?.add(KnowledgeDelTypeEvent(data: {"id":selectValueTemp.id}));
-                                                },
-                                                child: Icon(
-                                                Icons.cancel_outlined,
-                                                color: Colors.red,
-                                                size: 20,
-                                              ),)),
+                                        Positioned(
+                                            right: 0,
+                                            top: 0,
+                                            child: AnimatedSwitcher(
+                                                duration: Duration(seconds: 1),
+                                                child: (_edit)
+                                                    ? GestureDetector(
+                                                        onTap: () {
+                                                          knowledgeCubit?.delType(data: {"id": selectValueTemp.id});
+                                                        },
+                                                        child: Icon(
+                                                          Icons.cancel_outlined,
+                                                          color: Colors.red,
+                                                          size: 20,
+                                                        ),
+                                                      )
+                                                    : Container()))
                                       ],
                                     );
                                   },
@@ -399,14 +418,22 @@ class _KnowledgePageState extends State<KnowledgePage> {
                     ),
                     ElevatedButton(
                         onPressed: () {
-                          knowledgeBloc?.add(KnowledgeAddDataEvent(map: {
+                          knowledgeCubit?.reqAddKnowledgeData(data: {
                             "type": "add",
                             "text": "${_textEditingController.text}",
                             "url": "${_urlEditingController.text}",
                             "label": "${_labelEditingController.text}",
                             "type_id": selectChildValue?.id,
                             "describe": "${selectChildValue?.id}",
-                          }));
+                          });
+                          // knowledgeCubit?.add(KnowledgeAddDataEvent(map: {
+                          //   "type": "add",
+                          //   "text": "${_textEditingController.text}",
+                          //   "url": "${_urlEditingController.text}",
+                          //   "label": "${_labelEditingController.text}",
+                          //   "type_id": selectChildValue?.id,
+                          //   "describe": "${selectChildValue?.id}",
+                          // }));
                         },
                         child: Text("添加")),
                   ],

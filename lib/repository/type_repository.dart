@@ -22,6 +22,7 @@ abstract class ITypeRepository {
 
 class TypeRepository extends ITypeRepository {
   // 添加子
+  @override
   Future<dynamic> addType(dynamic map) async {
     dynamic addTypeRead = await DioManager.getInstant().post(
       path: "${Config.baseUrl}/add_type",
@@ -45,6 +46,7 @@ class TypeRepository extends ITypeRepository {
   }
 
   // 查询
+  @override
   Future<dynamic> searchTypeChild(dynamic map) async {
     dynamic searchTypeRead = await DioManager.getInstant().post(
       path: "${Config.baseUrl}/search_type",
@@ -68,6 +70,7 @@ class TypeRepository extends ITypeRepository {
   }
 
   // 修改
+  @override
   Future<dynamic> updateType(dynamic map) async {
     dynamic updateTypeRead = await DioManager.getInstant().post(
       path: "${Config.baseUrl}/update_type",
@@ -91,6 +94,7 @@ class TypeRepository extends ITypeRepository {
   }
 
   // 删除
+  @override
   Future<dynamic> delType(dynamic map) async {
     dynamic delTypeRead = await DioManager.getInstant().post(
       path: "${Config.baseUrl}/del_type",
@@ -114,6 +118,7 @@ class TypeRepository extends ITypeRepository {
   }
 
 
+  @override
   Future<ResultBean> searchType(dynamic map) async {
     try {
       Response searchTypeRead = await DioManager.getInstant().post(

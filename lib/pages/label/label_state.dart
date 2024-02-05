@@ -73,15 +73,3 @@ class LabelZoomState extends LabelState {
   @override
   List<Object?> get props => [randomValue];
 }
-
-class LabelSelectIndexState extends LabelState {
-
-  final int index;
-  final TypeBean typeBean;
-
-  LabelSelectIndexState({required this.index, required this.typeBean});
-
-  @override
-  List<Object?> get props => [index,typeBean];
-
-}

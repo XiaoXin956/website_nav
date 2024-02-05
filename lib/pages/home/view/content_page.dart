@@ -3,18 +3,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:website_nav/bean/knowledge_bean.dart';
 import 'package:website_nav/bean/type_bean.dart';
 import 'package:website_nav/pages/home/bloc/click_cubit.dart';
-import 'package:website_nav/pages/knowledge_edit/knowledge_bloc.dart';
-import 'package:website_nav/pages/knowledge_edit/knowledge_event.dart';
+import 'package:website_nav/pages/knowledge_edit/knowledge_cubit.dart';
 import 'package:website_nav/pages/knowledge_edit/knowledge_state.dart';
 import 'package:website_nav/widgets/fixed_size_grid_delegate.dart';
 
-class ContentPage extends StatelessWidget {
-  List<dynamic> knowData = [];
-  KnowledgeBloc? knowledgeBloc;
+class ContentPage extends StatefulWidget {
 
-  ContentPage({super.key});
+  const ContentPage({super.key});
+
+  @override
+  State<ContentPage> createState() => _ContentPageState();
+}
+
+class _ContentPageState extends State<ContentPage> {
+  List<dynamic> knowData = [];
+
+  KnowledgeCubit? knowledgeCubit;
 
   ScrollController scrollController = ScrollController();
+
   List<GlobalKey> itemKeys = [];
 
   bool _edit = false;
@@ -33,14 +40,20 @@ class ContentPage extends StatelessWidget {
             checkPosition(state.typeBean);
           });
         }
-        return BlocBuilder<KnowledgeBloc, KnowledgeState>(
+        return BlocBuilder<KnowledgeCubit, KnowledgeState>(
           builder: (BuildContext context, state) {
-            knowledgeBloc = context.read<KnowledgeBloc>();
+            knowledgeCubit = context.read<KnowledgeCubit>();
             if (state is KnowledgeSearchDataState) {
               // 查询成功，显示
               knowData = state.knowData;
               itemKeys.clear();
               itemKeys = List.generate(knowData.length, (index) => GlobalKey());
+            }else if(state is KnowledgeFailState){
+
+            }else if(state is KnowledgeEditTypeState){
+
+            }else if(state is KnowledgeSuccessState){
+              knowledgeCubit?.reqSearchAllKnowledgeData(data: {"type": "search"});
             }
             return _buildUI();
           },
@@ -72,12 +85,11 @@ class ContentPage extends StatelessWidget {
               GridView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                gridDelegate: FixedSizeGridDelegate(100, 60, mainAxisSpacing: 10),
+                gridDelegate: FixedSizeGridDelegate(150, 60, mainAxisSpacing: 10),
                 itemCount: data['know_data'].length,
                 itemBuilder: (BuildContext context, int index) {
                   KnowledgeBean knowledgeBean = data['know_data'][index];
                   return Container(
-                    color: Colors.red,
                     child: Stack(
                       children: [
                         GestureDetector(
@@ -85,7 +97,7 @@ class ContentPage extends StatelessWidget {
                             // 跳转
                           },
                           child: Container(
-                            width: 60,
+                            height: 60,
                             decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white, border: Border.all(color: Colors.grey, width: 1)),
                             margin: EdgeInsets.all(2),
                             child: Row(
@@ -106,8 +118,8 @@ class ContentPage extends StatelessWidget {
                           ),
                         ),
                         Positioned(
-                            right: 0,
-                            top: 0,
+                            right: 5,
+                            top: 5,
                             child: Row(
                               children: [
                                 GestureDetector(
@@ -119,7 +131,10 @@ class ContentPage extends StatelessWidget {
                                   ),
                                 ),
                                 GestureDetector(
-                                  onTap: () {},
+                                  onTap: () {
+                                    // 删除
+                                    knowledgeCubit?.reqDelKnowledgeData(data: {"id": knowledgeBean.id,"type":"remove"});
+                                  },
                                   child: Icon(
                                     Icons.remove_circle,
                                     size: 20,

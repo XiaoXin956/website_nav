@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:website_nav/bean/type_bean.dart';
+import 'package:website_nav/utils/date_tool.dart';
 
 class KnowledgeState extends Equatable {
   @override
@@ -39,12 +40,14 @@ class KnowledgeFailState extends KnowledgeState {
 }
 
 class LabelTypeFailState extends KnowledgeState {
+
+  final String timestamp;
   final String msgFail;
 
-  LabelTypeFailState({required this.msgFail});
+  LabelTypeFailState({required this.msgFail, required this.timestamp});
 
   @override
-  List<Object?> get props => [msgFail];
+  List<Object?> get props => [msgFail, timestamp];
 }
 
 // 类型添加成功
@@ -79,18 +82,20 @@ class LabelTypeSelectChildState extends KnowledgeState {
   List<Object?> get props => [typeBean];
 }
 
-
-class KnowledgeSearchDataState extends KnowledgeState{
-
+class KnowledgeSearchDataState extends KnowledgeState {
   final dynamic knowData;
+
   KnowledgeSearchDataState({required this.knowData});
+
   @override
   List<Object?> get props => [knowData];
 }
 
-class KnowledgeEditTypeState extends KnowledgeState{
-  dynamic randomValue;
-  KnowledgeEditTypeState({this.randomValue});
+class KnowledgeEditTypeState extends KnowledgeState {
+  final bool isEdit;
+
+  KnowledgeEditTypeState({required this.isEdit});
+
   @override
-  List<Object?> get props => [randomValue];
+  List<Object?> get props => [isEdit];
 }

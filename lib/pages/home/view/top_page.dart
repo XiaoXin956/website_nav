@@ -64,9 +64,8 @@ class _TopPageState extends State<TopPage> {
               SizedBox(
                 width: 6,
               ),
-              // 老树昏鸦
               Text(
-                "老树骑鸭",
+                "",
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
               Spacer(),
@@ -74,12 +73,10 @@ class _TopPageState extends State<TopPage> {
               // 知识新增页面
               InkWell(
                 onTap: () {
-
                   if(userData==null){
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("请先登录")));
                     return;
                   }
-
                   // String url = "http://${html.window.location.host}/add_data";
                   // html.window.open(url,"_blank");
 

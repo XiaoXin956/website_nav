@@ -8,7 +8,6 @@ import 'package:website_nav/pages/home/home_bloc.dart';
 import 'package:website_nav/pages/home/home_event.dart';
 import 'package:website_nav/pages/home/view/content_page.dart';
 import 'package:website_nav/pages/home/view/top_page.dart';
-import 'package:website_nav/pages/knowledge_edit/knowledge_bloc.dart';
 import 'package:website_nav/pages/knowledge_edit/knowledge_event.dart';
 import 'package:website_nav/pages/label/label_view.dart';
 import 'package:website_nav/utils/print_utils.dart';
@@ -33,7 +32,6 @@ class HomePage extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => ClickCubit()),
         BlocProvider(create: (context) => HomeBloc()),
-        BlocProvider(create: (context) => KnowledgeBloc()..add(KnowledgeSearchDataEvent(map: {"type":"search"}))),
       ],
       child: BlocBuilder<HomeBloc, HomeState>(
         builder: (BuildContext context, state) {

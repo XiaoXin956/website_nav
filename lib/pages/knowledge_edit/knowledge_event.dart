@@ -53,7 +53,10 @@ class KnowledgeSearchDataEvent extends KnowledgeEvent{
 
 // 编辑类型
 class KnowledgeEditTypeEvent extends KnowledgeEvent{
-
+  bool isEdit;
+  KnowledgeEditTypeEvent({required this.isEdit});
+  @override
+  List<Object?> get props => [];
 }
 
 class KnowledgeDelTypeEvent extends KnowledgeEvent{
