@@ -4,15 +4,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_strategy/url_strategy.dart';
+import 'package:website_nav/pages/feedback/feedback_page.dart';
 import 'package:website_nav/pages/knowledge_edit/knowledge_cubit.dart';
 import 'package:website_nav/pages/knowledge_edit/knowledge_view.dart';
 import 'package:website_nav/pages/label/label_cubit.dart';
 import 'package:website_nav/pages/login/login_bloc.dart';
+import 'package:website_nav/utils/print_utils.dart';
+import 'package:website_nav/utils/uri_utils.dart';
 
 import 'generated/l10n.dart';
 import 'pages/home/view/home_page.dart';
 
-GlobalKey appGlobalKey = GlobalKey();
+final appGlobalKey = GlobalKey();
 
 void main() {
   setPathUrlStrategy();
@@ -65,6 +68,15 @@ class MyApp extends StatelessWidget {
                   return MaterialPageRoute(builder: (BuildContext context) {
                     return KnowledgePage();
                   });
+                }else if(urlName.startsWith("/feedback")){
+                  // 解析url
+                  // final params = settings.name!.substring(settings.name!.lastIndexOf("?")+1,settings.name!.length);
+                  // Map<String,dynamic> urlAnalyzeData = urlAnalyze(params);
+                  printRed("意见反馈");
+                  return MaterialPageRoute(builder: (BuildContext context) {
+                    return FeedbackPage();
+                  });
+
                 }
                 return null;
               },

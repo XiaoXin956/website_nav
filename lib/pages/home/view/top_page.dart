@@ -12,6 +12,7 @@ import 'package:website_nav/pages/login/login_event.dart';
 import 'package:website_nav/pages/login/login_state.dart';
 import 'package:website_nav/utils/date_tool.dart';
 import 'package:website_nav/utils/sp_utils.dart';
+// import 'dart:html' deferred as html;
 import 'dart:html' as html;
 
 
@@ -68,8 +69,22 @@ class _TopPageState extends State<TopPage> {
                 "",
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
-              Spacer(),
 
+              Spacer(),
+              // 意见反馈
+              InkWell(
+                onTap: () {
+                  String url = "http://${html.window.location.host}/feedback";
+                  html.window.open(url,"_blank");
+                },
+                child: Text(
+                  "${S.of(context).edit_data}",
+                  style: TextStyle(color: selectColor),
+                ),
+              ),
+              SizedBox(
+                width: 6,
+              ),
               // 知识新增页面
               InkWell(
                 onTap: () {

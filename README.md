@@ -19,3 +19,32 @@ SystemChrome.setApplicationSwitcherDescription(
     );
 ```
 
+web 超链接跳转
+在 MaterailApp 中使用 onGenerateRoute
+
+```dart
+import 'dart:html' as html;
+// 在跳转的页面中使用
+window.location.href = "http://${html.window.location.host}/feedback?name=123&age=12"
+// MaterialApp
+onGenerateRoute: (settings) {
+                String urlName = settings.name.toString();
+                if (urlName == '/') {
+                  //首页
+                  return MaterialPageRoute(builder: (BuildContext context) {
+                    return HomePage();
+                  });
+                }if(urlName.startsWith("/feedback")){
+                  // 解析url
+                  final params = settings.name!.substring(settings.name!.lastIndexOf("?")+1,settings.name!.length);
+                  Map<String,dynamic> urlAnalyzeData = urlAnalyze(params);
+                  dynamic name = urlAnalyzeData["name"];
+                  dynamic age = urlAnalyzeData["age"];
+                  return MaterialPageRoute(builder: (BuildContext context) {
+                       // 参数传递
+                    return FeedbackPage();
+                  });
+                }
+                return null;
+              },
+```
