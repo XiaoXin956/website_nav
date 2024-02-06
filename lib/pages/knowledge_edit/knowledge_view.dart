@@ -1,12 +1,13 @@
-import 'dart:html';
+import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:website_nav/bean/type_bean.dart';
 import 'package:website_nav/generated/l10n.dart';
 import 'package:website_nav/pages/knowledge_edit/knowledge_cubit.dart';
-import 'package:website_nav/pages/knowledge_edit/knowledge_event.dart';
 import 'package:website_nav/pages/label/label_cubit.dart';
 import 'package:website_nav/utils/print_utils.dart';
 import 'package:website_nav/widgets/fixed_size_grid_delegate.dart';
@@ -15,9 +16,6 @@ import 'knowledge_state.dart';
 
 // 编辑页面
 class KnowledgePage extends StatefulWidget {
-
-
-
   const KnowledgePage({super.key});
 
   @override
@@ -37,6 +35,8 @@ class _KnowledgePageState extends State<KnowledgePage> {
   TextEditingController _urlEditingController = TextEditingController();
   TextEditingController _labelEditingController = TextEditingController();
   TextEditingController _describeEditingController = TextEditingController();
+
+  String imageUrl = "";
 
   bool _edit = false;
 
@@ -119,6 +119,8 @@ class _KnowledgePageState extends State<KnowledgePage> {
             ScaffoldMessenger.of(context).clearSnackBars();
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msgSuccess)));
           });
+        } else if (state is KnowledgeUploadIconSuccessState) {
+          imageUrl = state.imageUrl;
         }
         return _buildPage(context);
       },
@@ -426,27 +428,33 @@ class _KnowledgePageState extends State<KnowledgePage> {
                     Row(
                       children: [
                         Text('图标：'),
+                        // 预览
+                        (imageUrl != "")
+                            ? Image.network(
+                                imageUrl,
+                                width: 80,
+                                height: 80,
+                              )
+                            : Container(
+                                width: 80,
+                                height: 80,
+                              ),
                         Expanded(
-                          child: TextField(
-                            controller: _labelEditingController,
-                            textAlign: TextAlign.start,
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.lightBlueAccent, width: 2))),
-                            onChanged: (value) {
-                              _labelEditingController.text = value;
-                              _labelEditingController.selection =
-                                  TextSelection(baseOffset: _labelEditingController.text.length, extentOffset: _labelEditingController.text.length);
-                            },
-                          ),
+                          child: Text(imageUrl, style: TextStyle(color: Colors.blue, fontSize: 12)),
                         ),
-                        TextButton(onPressed: () async {
-                          // 选择文件
-                          FilePickerResult? result = await FilePicker.platform.pickFiles();
-                          if(result!=null){
-                            File file = File(result.files,result.files.single.name);
-                            printRed(file.name);
-                          }
-                        }, child: Text("选择")),
+                        TextButton(
+                            onPressed: () async {
+                              FilePickerResult? result = await FilePicker.platform.pickFiles();
+                              if (result != null) {
+                                File file = File(result.files.toString());
+                                // File file = File(result.files, result.files.single.name);
+                                printRed(file.path);
+                                // 进行图片上传
+                                Map<String, dynamic> data = {"image": await MultipartFile.fromBytes(result.files.single.bytes as List<int>, filename: result.files.single.name)};
+                                knowledgeCubit?.uploadIcon(data: data);
+                              }
+                            },
+                            child: Text("选择")),
                       ],
                     ),
                     SizedBox(
@@ -459,6 +467,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
                             "text": "${_textEditingController.text}",
                             "url": "${_urlEditingController.text}",
                             "label": "${_labelEditingController.text}",
+                            "image_url": "$imageUrl",
                             "type_id": selectChildValue?.id,
                             "describe": "${selectChildValue?.id}",
                           });

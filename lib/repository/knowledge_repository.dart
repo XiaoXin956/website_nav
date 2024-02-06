@@ -15,6 +15,8 @@ abstract class IKnowledgeRepository {
   Future<dynamic> delKnowledge(dynamic map);
 
   Future<dynamic> searchKnowledge(dynamic map);
+
+  Future<dynamic> uploadIcon(dynamic map);
 }
 
 class KnowledgeRepository extends IKnowledgeRepository{
@@ -92,6 +94,32 @@ class KnowledgeRepository extends IKnowledgeRepository{
   Future updateKnowledge(map) {
     // TODO: implement updateKnowledge
     throw UnimplementedError();
+  }
+
+  @override
+  Future uploadIcon(map,{onSendProgress,onReceiveProgress}) async {
+    dynamic fileUploadResult = await DioManager.getInstant().postFile(
+      path: "https://api.imgbb.com/1/upload?expiration=600&key=2a3e1f7911d0220b807d8e6811a39b7f",
+      data: map,
+      options: Options(
+        // contentType: "application/json",
+        // headers: {"Access-Control-Allow-Credentials": true, "Access-Control-Allow-Origin": "*"},
+      ),
+      onSendProgress:(int count, int total)=>onSendProgress,
+      onReceiveProgress:(int count, int total)=>onReceiveProgress,
+    );
+    dynamic dataRes = {};
+    if (fileUploadResult.data is Map) {
+      dataRes = fileUploadResult.data;
+    } else {
+      dataRes = json.decode(fileUploadResult.data);
+    }
+    if(dataRes["status"]==200 && dataRes["success"]==true){
+      String imgUrl = dataRes['data']["url"];
+      return ResultBean(code: 0, msg: "上传成功", data: imgUrl);
+    }else{
+      return ResultBean(code: 0, msg: "上传失败");
+    }
   }
 
 

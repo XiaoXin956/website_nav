@@ -99,3 +99,17 @@ class KnowledgeEditTypeState extends KnowledgeState {
   @override
   List<Object?> get props => [isEdit];
 }
+
+
+class KnowledgeUploadLoadingState extends KnowledgeState {}
+
+class KnowledgeUploadIconSuccessState extends KnowledgeState {
+    final String imageUrl;
+
+    KnowledgeUploadIconSuccessState({required this.imageUrl});
+    @override
+  List<Object?> get props => [imageUrl];
+}
+
+
+

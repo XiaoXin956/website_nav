@@ -99,4 +99,25 @@ class KnowledgeCubit extends Cubit<KnowledgeState> {
       emit(KnowledgeFailState(msgFail: "${resultBean.msg}"));
     }
   }
+
+
+
+  // 上传图标
+  uploadIcon({required dynamic data}) async {
+    emit(KnowledgeUploadLoadingState());
+    ResultBean resultBean = await knowledgeRepository.uploadIcon(data);
+    if (resultBean.code == 0) {
+      emit(KnowledgeUploadIconSuccessState(imageUrl: resultBean.data.toString()));
+    } else {
+      emit(KnowledgeFailState(msgFail: "${resultBean.msg}"));
+    }
+  }
+
+
+
+
+
+
+
+
 }
