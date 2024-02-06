@@ -1,3 +1,6 @@
+import 'dart:html';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:website_nav/bean/type_bean.dart';
@@ -5,6 +8,7 @@ import 'package:website_nav/generated/l10n.dart';
 import 'package:website_nav/pages/knowledge_edit/knowledge_cubit.dart';
 import 'package:website_nav/pages/knowledge_edit/knowledge_event.dart';
 import 'package:website_nav/pages/label/label_cubit.dart';
+import 'package:website_nav/utils/print_utils.dart';
 import 'package:website_nav/widgets/fixed_size_grid_delegate.dart';
 
 import 'knowledge_state.dart';
@@ -419,6 +423,35 @@ class _KnowledgePageState extends State<KnowledgePage> {
                     SizedBox(
                       height: 10,
                     ),
+                    Row(
+                      children: [
+                        Text('图标：'),
+                        Expanded(
+                          child: TextField(
+                            controller: _labelEditingController,
+                            textAlign: TextAlign.start,
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.lightBlueAccent, width: 2))),
+                            onChanged: (value) {
+                              _labelEditingController.text = value;
+                              _labelEditingController.selection =
+                                  TextSelection(baseOffset: _labelEditingController.text.length, extentOffset: _labelEditingController.text.length);
+                            },
+                          ),
+                        ),
+                        TextButton(onPressed: () async {
+                          // 选择文件
+                          FilePickerResult? result = await FilePicker.platform.pickFiles();
+                          if(result!=null){
+                            File file = File(result.files,result.files.single.name);
+                            printRed(file.name);
+                          }
+                        }, child: Text("选择")),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
                     ElevatedButton(
                         onPressed: () {
                           knowledgeCubit?.reqAddKnowledgeData(data: {
@@ -429,14 +462,6 @@ class _KnowledgePageState extends State<KnowledgePage> {
                             "type_id": selectChildValue?.id,
                             "describe": "${selectChildValue?.id}",
                           });
-                          // knowledgeCubit?.add(KnowledgeAddDataEvent(map: {
-                          //   "type": "add",
-                          //   "text": "${_textEditingController.text}",
-                          //   "url": "${_urlEditingController.text}",
-                          //   "label": "${_labelEditingController.text}",
-                          //   "type_id": selectChildValue?.id,
-                          //   "describe": "${selectChildValue?.id}",
-                          // }));
                         },
                         child: Text("添加")),
                   ],

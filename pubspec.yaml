@@ -1,5 +1,5 @@
 name: website_nav
-description: 网站导航
+description: 时空穿梭
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -34,11 +34,13 @@ dependencies:
     sdk: flutter
   intl: any
 
+
   flutter_bloc:
   equatable:
   dio:
   flutter_screenutil:
   shared_preferences: ^2.2.2
+  file_picker: ^6.1.1
   easy_refresh:
   url_strategy:
 

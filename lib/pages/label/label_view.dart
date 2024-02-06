@@ -19,6 +19,10 @@ class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMix
   bool loading = false;
   bool loadingError = false;
   List<TypeBean> typeData = [];
+  List<TypeBean> fixedData = [
+    TypeBean(id: -1, name: "关于我们"),
+    TypeBean(id: -2, name: "留言板"),
+  ];
 
   // LabelBloc? labelBloc;
   LabelCubit? labelCubit;
@@ -91,6 +95,24 @@ class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMix
                           );
                         },
                       )),
+
+
+              Expanded(
+                flex: 1,
+                child: ListView.builder(
+                  padding: EdgeInsets.zero,
+                  itemCount: fixedData.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return InkWell(
+                      onTap: () {
+
+                      },
+                      child: menuItem(index: index, typeBean: fixedData[index]),
+                    );
+                  },
+                ),
+              ),
+
               if (loadingError)
                 TextButton(
                   onPressed: () {

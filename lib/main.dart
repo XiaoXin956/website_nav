@@ -72,11 +72,9 @@ class MyApp extends StatelessWidget {
                   // 解析url
                   // final params = settings.name!.substring(settings.name!.lastIndexOf("?")+1,settings.name!.length);
                   // Map<String,dynamic> urlAnalyzeData = urlAnalyze(params);
-                  printRed("意见反馈");
                   return MaterialPageRoute(builder: (BuildContext context) {
                     return FeedbackPage();
                   });
-
                 }
                 return null;
               },
