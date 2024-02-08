@@ -109,7 +109,7 @@ class KnowledgeCubit extends Cubit<KnowledgeState> {
     if (resultBean.code == 0) {
       emit(KnowledgeUploadIconSuccessState(imageUrl: resultBean.data.toString()));
     } else {
-      emit(KnowledgeFailState(msgFail: "${resultBean.msg}"));
+      emit(KnowledgeUploadIconFailState(msg: "${resultBean.msg}"));
     }
   }
 

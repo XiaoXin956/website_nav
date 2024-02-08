@@ -37,6 +37,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
   TextEditingController _describeEditingController = TextEditingController();
 
   String imageUrl = "";
+  bool uploadLoading = false;
 
   bool _edit = false;
 
@@ -55,11 +56,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
       builder: (BuildContext context, state) {
         knowledgeCubit = context.read<KnowledgeCubit>();
         if (state is KnowledgeInitState) {
-          // 初始化
-          // _textEditingController.text = "";
-          // _urlEditingController.text = "";
-          // _labelEditingController.text = "";
-          // _describeEditingController.text = "";
+
         } else if (state is LabelTypeSelectChildState) {
           selectChildValue = state.typeBean;
         } else if (state is LabelTypeFailState) {
@@ -69,15 +66,13 @@ class _KnowledgePageState extends State<KnowledgePage> {
           });
         } else if (state is LabelTypeSearchSuccessState) {
           context.read<LabelCubit>().reqSearchLabel({"type": "all"});
-          // context.read<KnowledgeCubit>().add(KnowledgeSearchDataEvent(map: {"type":"search"}));
           context.read<KnowledgeCubit>().reqSearchAllKnowledgeData(data: {"type": "search"});
-
           // 获取成功
           typeChildData.clear();
           typeChildData.addAll(state.typeData);
         } else if (state is LabelTypeAddSuccessState) {
+          knowledgeCubit?.reqSearchType(data: {"type": "child"});
           context.read<LabelCubit>().searchAllType({"type": "all"});
-          // context.read<KnowledgeBloc>().add(KnowledgeSearchDataEvent(map: {"type":"search"}));
           context.read<KnowledgeCubit>().reqSearchAllKnowledgeData(data: {"type": "search"});
           //  添加成功
           // 一级刷新数据
@@ -90,7 +85,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
           knowledgeCubit?.reqSearchType(data: {"type": "child"});
         } else if (state is KnowledgeAddSuccessState) {
           context.read<LabelCubit>().searchAllType({"type": "all"});
-          context.read<KnowledgeCubit>().reqSearchAllKnowledgeData(data: {"type": "search"});
+          knowledgeCubit?.reqSearchType(data: {"type": "child"});
 
           knowledgeCubit?.reqKnowledgeInit();
           // knowledgeCubit?.add(KnowledgeInitEvent());
@@ -112,15 +107,18 @@ class _KnowledgePageState extends State<KnowledgePage> {
           knowledgeCubit?.reqKnowledgeInit();
         } else if (state is KnowledgeSuccessState) {
           context.read<LabelCubit>().searchAllType({"type": "all"});
-          // context.read<KnowledgeCubit>().add(KnowledgeSearchDataEvent(map: {"type":"search"}));
-          // knowledgeCubit?.add(LabelSearchEvent(data: {"type": "child"}));
           knowledgeCubit?.reqSearchType(data: {"type": "child"});
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             ScaffoldMessenger.of(context).clearSnackBars();
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msgSuccess)));
           });
         } else if (state is KnowledgeUploadIconSuccessState) {
+          uploadLoading = false;
           imageUrl = state.imageUrl;
+        } else if (state is KnowledgeUploadLoadingState) {
+          uploadLoading = true;
+        } else if (state is KnowledgeUploadIconFailState) {
+          uploadLoading = false;
         }
         return _buildPage(context);
       },
@@ -129,10 +127,9 @@ class _KnowledgePageState extends State<KnowledgePage> {
 
   Widget _buildPage(BuildContext context) {
     return Scaffold(
-      body: WillPopScope(
-        onWillPop: () async {
-          return true;
-        },
+      body: PopScope(
+        canPop: true,
+        onPopInvoked: (value) async {},
         child: Container(
           padding: EdgeInsets.all(20),
           child: ListView(
@@ -194,16 +191,12 @@ class _KnowledgePageState extends State<KnowledgePage> {
                               ),
                               ElevatedButton(
                                   onPressed: () {
-                                    // knowledgeCubit?.add(LabelTypeAddEvent(data: {
-                                    //   "type": "child",
-                                    //   "name": twoMenuName,
-                                    // }));
                                     knowledgeCubit?.reqKnowledgeTypeAdd(data: {
                                       "type": "child",
                                       "name": twoMenuName,
                                     });
                                   },
-                                  child: Text("新增菜单")),
+                                  child: Text("${S.of(context).add_menu}")),
                             ],
                           ),
                         )),
@@ -240,7 +233,12 @@ class _KnowledgePageState extends State<KnowledgePage> {
                                           (_edit) ? "${S.of(context).complete}" : "${S.of(context).edit}",
                                           style: TextStyle(color: Colors.blue),
                                         ),
-                                      )
+                                      ),
+                                      IconButton(
+                                          onPressed: () {
+                                            knowledgeCubit?.reqSearchType(data: {"type": "child"});
+                                          },
+                                          icon: Icon(Icons.refresh)),
                                     ],
                                   ),
                                 ),
@@ -430,31 +428,41 @@ class _KnowledgePageState extends State<KnowledgePage> {
                         Text('图标：'),
                         // 预览
                         (imageUrl != "")
-                            ? Image.network(
-                                imageUrl,
+                            ? Container(
+                                margin: EdgeInsets.only(left: 8, right: 8),
                                 width: 80,
                                 height: 80,
+                                child: Image.network(
+                                  imageUrl,
+                                  width: 80,
+                                  height: 80,
+                                ),
                               )
                             : Container(
+                                margin: EdgeInsets.only(left: 8, right: 8),
                                 width: 80,
                                 height: 80,
                               ),
                         Expanded(
                           child: Text(imageUrl, style: TextStyle(color: Colors.blue, fontSize: 12)),
                         ),
-                        TextButton(
-                            onPressed: () async {
-                              FilePickerResult? result = await FilePicker.platform.pickFiles();
-                              if (result != null) {
-                                File file = File(result.files.toString());
-                                // File file = File(result.files, result.files.single.name);
-                                printRed(file.path);
-                                // 进行图片上传
-                                Map<String, dynamic> data = {"image": await MultipartFile.fromBytes(result.files.single.bytes as List<int>, filename: result.files.single.name)};
-                                knowledgeCubit?.uploadIcon(data: data);
-                              }
-                            },
-                            child: Text("选择")),
+                        (uploadLoading)
+                            ? CircularProgressIndicator()
+                            : TextButton(
+                                onPressed: () async {
+                                  FilePickerResult? result = await FilePicker.platform.pickFiles();
+                                  if (result != null) {
+                                    File file = File(result.files.toString());
+                                    // File file = File(result.files, result.files.single.name);
+                                    printRed(file.path);
+                                    // 进行图片上传
+                                    Map<String, dynamic> data = {
+                                      "image": await MultipartFile.fromBytes(result.files.single.bytes as List<int>, filename: result.files.single.name)
+                                    };
+                                    knowledgeCubit?.uploadIcon(data: data);
+                                  }
+                                },
+                                child: Text("选择")),
                       ],
                     ),
                     SizedBox(

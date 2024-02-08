@@ -111,5 +111,13 @@ class KnowledgeUploadIconSuccessState extends KnowledgeState {
   List<Object?> get props => [imageUrl];
 }
 
+class KnowledgeUploadIconFailState extends KnowledgeState {
+    final String msg;
+
+    KnowledgeUploadIconFailState({required this.msg});
+    @override
+  List<Object?> get props => [msg];
+}
+
 
 

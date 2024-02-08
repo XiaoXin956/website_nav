@@ -2,13 +2,17 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
-import '../utils/print_utils.dart';
-
 String baseUrl = "";
 ResponseType responseType = ResponseType.json;
 int receiveTimeout = 60;
 int sendTimeout = 60;
 int connectTimeout = 60;
+
+printWhite(String msg){
+  if (kDebugMode) {
+    print("\x1B[37m ${msg} \x1B[0m");
+  }
+}
 
 class DioManager {
 
@@ -143,7 +147,7 @@ class PrintInterceptor extends InterceptorsWrapper {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     if (kDebugMode) {
-      printRed('''
+      printWhite('''
       打印拦截器 请求地址：${options.uri} \n 方法：${options.method} \n 头部：${options.headers} \n 参数：${options.data}
       ''');
     }
@@ -154,7 +158,7 @@ class PrintInterceptor extends InterceptorsWrapper {
   void onResponse(
       Response<dynamic> response, ResponseInterceptorHandler handler) {
     if (kDebugMode) {
-      printBlue('''
+      printWhite('''
       打印拦截器 响应数据：状态Code：${response.statusCode}  状态数据：${response.statusMessage} \n 头部 ${response.headers} \n 数据：${response.data}
       ''');
     }

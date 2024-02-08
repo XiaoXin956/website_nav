@@ -14,5 +14,6 @@
   "menu": "菜单",
   "type": "类型",
   "edit_data": "编辑数据",
-  "please_select": "请选择"
+  "please_select": "请选择",
+  "add_menu": "添加菜单"
 }

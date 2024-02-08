@@ -14,5 +14,6 @@
   "menu": "menu",
   "type": "type",
   "edit_data": "Edit data",
-  "please_select": "Please select"
+  "please_select": "Please select",
+  "add_menu": "Add menu"
 }
