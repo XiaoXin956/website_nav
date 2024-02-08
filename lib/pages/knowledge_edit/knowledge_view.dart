@@ -86,8 +86,6 @@ class _KnowledgePageState extends State<KnowledgePage> {
         } else if (state is KnowledgeAddSuccessState) {
           context.read<LabelCubit>().searchAllType({"type": "all"});
           knowledgeCubit?.reqSearchType(data: {"type": "child"});
-
-          knowledgeCubit?.reqKnowledgeInit();
           // knowledgeCubit?.add(KnowledgeInitEvent());
           // 资源添加成功
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -475,7 +473,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
                             "text": "${_textEditingController.text}",
                             "url": "${_urlEditingController.text}",
                             "label": "${_labelEditingController.text}",
-                            "image_url": "$imageUrl",
+                            "img_url": "$imageUrl",
                             "type_id": selectChildValue?.id,
                             "describe": "${selectChildValue?.id}",
                           });

@@ -4,9 +4,10 @@ class KnowledgeBean {
   String? label;
   String? text;
   String? url;
+  String? imgUrl;
   int? typeId;
 
-  KnowledgeBean({this.id, this.label, this.text, this.url, this.typeId});
+  KnowledgeBean({this.id, this.label, this.text, this.url, this.typeId, this.imgUrl});
 
   KnowledgeBean.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -14,6 +15,7 @@ class KnowledgeBean {
     text = json['text'];
     url = json['url'];
     typeId = json['type_id'];
+    imgUrl = json['img_url'];
   }
 
   Map<String, dynamic> toJson() {
@@ -23,6 +25,8 @@ class KnowledgeBean {
     data['text'] = this.text;
     data['url'] = this.url;
     data['type_id'] = this.typeId;
+    data['img_url'] = this.imgUrl;
     return data;
   }
+
 }

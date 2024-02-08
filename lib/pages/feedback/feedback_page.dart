@@ -17,7 +17,6 @@ class _FeedbackPageState extends State<FeedbackPage> {
       child: BlocBuilder<FeedbackCubit, FeedbackState>(
         builder: (context, state) {
 
-
           if(state is FeedbackInitial){
 
           }else if(state is FeedbackLoadingState){
@@ -30,10 +29,10 @@ class _FeedbackPageState extends State<FeedbackPage> {
 
           }
 
-
           return Scaffold(
             body: Center(
               child: Text('Feedback'),
+
             ),
           );
         },

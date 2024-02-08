@@ -9,12 +9,11 @@ import 'login_event.dart';
 import 'login_state.dart';
 
 class LoginPage extends StatelessWidget {
-
   LoginBloc? loginBloc;
   bool _loginLoading = false;
   String email = "";
   String password = "";
-  String msg= "";
+  String msg = "";
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +21,6 @@ class LoginPage extends StatelessWidget {
       builder: (context, state) {
         loginBloc = context.read<LoginBloc>();
         if (state is LoginInitState) {
-
         } else if (state is LoginLoadingState) {
           _loginLoading = true;
         } else if (state is LoginSuccessState) {
@@ -50,11 +48,7 @@ class LoginPage extends StatelessWidget {
         padding: EdgeInsets.all(5),
         height: 300,
         width: 500,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(width: 1,color: Colors.black)
-        ),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), border: Border.all(width: 1, color: Colors.black)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -125,29 +119,27 @@ class LoginPage extends StatelessWidget {
             (_loginLoading)
                 ? CircularProgressIndicator()
                 : Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ElevatedButton(
-                    onPressed: () {
-                      loginBloc?.add(LoginUserLoginEvent(map: {"email": email, "password": password,"type":"login"}));
-                    },
-                    child: Text("${S.of(context).login}")),
-                ElevatedButton(
-                    onPressed: () {
-                      loginBloc?.add(LoginUserLoginEvent(map: {"email": email, "password": password,"type":"reg"}));
-                    },
-                    child: Text("${S.of(context).reg}")),
-              ],
-            ),
-            if(msg!='')
-              Text(msg),
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      ElevatedButton(
+                          onPressed: () {
+                            loginBloc?.add(LoginUserLoginEvent(map: {"email": email, "password": password, "type": "login"}));
+                          },
+                          child: Text("${S.of(context).login}")),
+                      ElevatedButton(
+                          onPressed: () {
+                            loginBloc?.add(LoginUserLoginEvent(
+                              map: {"email": email, "name": email, "password": password, "user_type": 2, "type": "reg"},
+                            ));
+                          },
+                          child: Text("${S.of(context).reg}")),
+                    ],
+                  ),
+            if (msg != '') Text(msg),
             SizedBox(height: 10),
           ],
         ),
       ),
     );
   }
-
-
-
 }

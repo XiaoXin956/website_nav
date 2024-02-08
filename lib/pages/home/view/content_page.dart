@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:website_nav/bean/knowledge_bean.dart';
@@ -6,6 +7,7 @@ import 'package:website_nav/pages/home/bloc/click_cubit.dart';
 import 'package:website_nav/pages/knowledge_edit/knowledge_cubit.dart';
 import 'package:website_nav/pages/knowledge_edit/knowledge_state.dart';
 import 'package:website_nav/widgets/fixed_size_grid_delegate.dart';
+import 'dart:html' as html;
 
 class ContentPage extends StatefulWidget {
 
@@ -95,6 +97,12 @@ class _ContentPageState extends State<ContentPage> {
                         GestureDetector(
                           onTap: () {
                             // 跳转
+                            if(kIsWeb){
+                              String url = "http://${html.window.location.host}/feedback";
+                              html.window.open(knowledgeBean.url.toString(),"_blank");
+                            }else{
+
+                            }
                           },
                           child: Container(
                             height: 60,
@@ -103,10 +111,18 @@ class _ContentPageState extends State<ContentPage> {
                             child: Row(
                               children: [
                                 // 图标
-                                Icon(
-                                  Icons.account_balance_rounded,
-                                  size: 20,
+                                Container(
+                                  width: 40,
+                                  height: 40,
+                                  margin: EdgeInsets.only(left: 5, right: 5),
+                                  child: (knowledgeBean.imgUrl != null)?
+                                  Image.network(knowledgeBean.imgUrl.toString()):
+                                  Icon(
+                                    Icons.account_balance_rounded,
+                                    size: 20,
+                                  ),
                                 ),
+
                                 // 文本
                                 Expanded(
                                     child: Text(
