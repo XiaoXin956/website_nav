@@ -28,7 +28,6 @@ class _FeedbackPageState extends State<FeedbackPage> {
           }else if(state is FeedbackFailedState){
 
           }
-
           return Scaffold(
             body: Center(
               child: Text('Feedback'),

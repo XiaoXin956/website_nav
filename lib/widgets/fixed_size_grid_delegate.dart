@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/rendering/sliver.dart';
 import 'package:flutter/src/rendering/sliver_grid.dart';
 
-/// gridview item distance fixed height
+// gridview 表格布局，item 高度固定
 class FixedSizeGridDelegate extends SliverGridDelegate {
   final double width;
   final double height;
