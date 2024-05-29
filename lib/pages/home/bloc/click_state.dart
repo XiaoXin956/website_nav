@@ -11,7 +11,7 @@ class ClickInitial extends ClickState {}
 
 class ClickMoveToPositionState extends ClickState{
 
-  final TypeBean typeBean;
+  final TypeLabelBean typeBean;
   ClickMoveToPositionState({required this.typeBean});
   @override
   List<Object?> get props => [typeBean];

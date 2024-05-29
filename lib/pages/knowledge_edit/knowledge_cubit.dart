@@ -34,7 +34,7 @@ class KnowledgeCubit extends Cubit<KnowledgeState> {
   }
 
   // 选择类型
-  selectKnowledgeType({required TypeBean typeBean}) {
+  selectKnowledgeType({required TypeLabelBean typeBean}) {
     emit(LabelTypeSelectChildState(typeBean: typeBean));
   }
 
@@ -75,7 +75,7 @@ class KnowledgeCubit extends Cubit<KnowledgeState> {
       var decode = json.decode(resultBean.data);
       dynamic result = (decode as List<dynamic>).map((e) {
         return {
-          "type_bean": TypeBean.fromJson(e['type_bean']),
+          "type_bean": TypeLabelBean.fromJson(e['type_bean']),
           "know_data": (e['result'] as List<dynamic>).map((e) => KnowledgeBean.fromJson(e)).toList(),
         };
       }).toList();

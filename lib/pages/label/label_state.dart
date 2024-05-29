@@ -53,7 +53,7 @@ class LabelTypeEditState extends LabelState {
 // 查询
 class LabelTypeSearchSuccessState extends LabelState {
   final String type;
-  final List<TypeBean> typeData;
+  final List<TypeLabelBean> typeData;
 
   LabelTypeSearchSuccessState({required this.typeData, required this.type});
 
@@ -72,4 +72,15 @@ class LabelZoomState extends LabelState {
 
   @override
   List<Object?> get props => [randomValue];
+}
+
+class LabelExpandState extends LabelState {
+
+  final int index;
+
+  LabelExpandState({required this.index});
+
+  @override
+  List<Object?> get props => [index];
+
 }

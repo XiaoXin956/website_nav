@@ -1,6 +1,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:website_nav/helper/app_shared_pref.dart';
 
 String baseUrl = "";
 ResponseType responseType = ResponseType.json;
@@ -89,6 +90,10 @@ class DioManager {
     Function(int count, int total)? onReceiveProgress,
   }) async {
     try {
+
+      options??= Options();
+      options.headers?["user_id"] = (await AppSharedPref().getUserModel())?.id.toString();
+
       Response response = await _dio!.post(
         path,
         data: data,

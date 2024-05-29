@@ -59,7 +59,7 @@ showDialogConfirmCancel({
 }
 
 // 编辑
-showDialogEdit({required BuildContext context, required TypeBean typeBean, Function(String)? submit}) {
+showDialogEdit({required BuildContext context, required TypeLabelBean typeBean, Function(String)? submit}) {
   TextEditingController _text = TextEditingController(text: typeBean.name);
   showDialog(
     context: context,
@@ -181,7 +181,7 @@ showLogin({required BuildContext context}) {
 }
 
 // 类型选择
-showTypeSelect({required BuildContext context, required Rect rect, required List<TypeBean> typeData, required Function(TypeBean) selectData}) {
+showTypeSelect({required BuildContext context, required Rect rect, required List<TypeLabelBean> typeData, required Function(TypeLabelBean) selectData}) {
   showDialog(
     context: context,
     barrierColor: Colors.transparent,

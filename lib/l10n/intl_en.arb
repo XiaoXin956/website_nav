@@ -8,6 +8,7 @@
   "login": "Login",
   "log_out": "LogOut",
   "user_name": "UserName",
+  "user_email": "Email",
   "password": "Password",
   "reg": "Reg",
   "language_select": "Language Select",
@@ -15,5 +16,9 @@
   "type": "type",
   "edit_data": "Edit data",
   "please_select": "Please select",
-  "add_menu": "Add menu"
+  "add_menu": "Add menu",
+  "one_menu": "一级菜单",
+  "add_one_menu": "添加一级菜单",
+  "two_menu": "二级菜单",
+  "add_two_menu": "添加二级菜单"
 }

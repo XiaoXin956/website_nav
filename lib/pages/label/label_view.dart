@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:website_nav/bean/type_bean.dart';
 import 'package:website_nav/pages/label/label_cubit.dart';
 import 'package:website_nav/utils/print_utils.dart';
+import 'package:website_nav/widgets/custom_widget.dart';
 
 import 'label_state.dart';
 
@@ -16,17 +17,19 @@ class LabelPage extends StatefulWidget {
 }
 
 class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMixin {
+  
+  int indexExpand = -1; // 展开的数据
+  
   bool loading = false;
   bool loadingError = false;
-  List<TypeBean> typeData = [];
-  List<TypeBean> fixedData = [
-    TypeBean(id: -1, name: "关于我们"),
-    TypeBean(id: -2, name: "留言板"),
+  List<TypeLabelBean> typeData = [];
+  List<TypeLabelBean> fixedData = [
+    TypeLabelBean(id: -1, name: "关于我们"),
+    TypeLabelBean(id: -2, name: "留言板"),
   ];
 
-  // LabelBloc? labelBloc;
   LabelCubit? labelCubit;
-  dynamic allMap = {"type": "all"};
+  dynamic allMap = {"type": "search"};
 
   @override
   void initState() {
@@ -71,6 +74,8 @@ class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMix
           });
           loadingError = true;
           loading = false;
+        } else if (state is LabelExpandState) {
+          indexExpand = state.index;
         }
         return Container(
           width: 200.0,
@@ -90,29 +95,13 @@ class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMix
                           return InkWell(
                             onTap: () {
                               widget.itemClick!(typeData[index]);
+                              // 对应的标签展开
+                              labelCubit?.reqExpandData(index: index);
                             },
                             child: menuItem(index: index, typeBean: typeData[index]),
                           );
                         },
                       )),
-
-
-              Expanded(
-                flex: 1,
-                child: ListView.builder(
-                  padding: EdgeInsets.zero,
-                  itemCount: fixedData.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return InkWell(
-                      onTap: () {
-
-                      },
-                      child: menuItem(index: index, typeBean: fixedData[index]),
-                    );
-                  },
-                ),
-              ),
-
               if (loadingError)
                 TextButton(
                   onPressed: () {
@@ -120,9 +109,7 @@ class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMix
                   },
                   child: Text('重新加载'),
                 ),
-              SizedBox(
-                height: 10,
-              ),
+              h(10),
             ],
           ),
         );
@@ -130,30 +117,67 @@ class _LabelPageState extends State<LabelPage> with SingleTickerProviderStateMix
     );
   }
 
-  Widget menuItem({required int index, required TypeBean typeBean}) {
+  Widget menuItem({required int index, required TypeLabelBean typeBean}) {
     return Container(
-      padding: const EdgeInsets.only(top: 6, bottom: 6),
-      child: Row(
-        // 父级菜单
-        mainAxisAlignment: MainAxisAlignment.start,
+      child: Column(
         children: [
-          SizedBox(
-            width: 5,
+          ExpansionTile(
+            tilePadding: EdgeInsets.zero,
+            shape: RoundedRectangleBorder(),
+            title: Row(
+            // 父级菜单
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              w(5),
+              Icon(
+                Icons.account_balance_wallet_outlined,
+                size: 30,
+              ),
+              w(5),
+              Expanded(
+                child: textWidget(
+                    text: "${typeBean.name}",
+                    maxLines: 1,
+                    textStyle: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                    )),
+                flex: 1,
+              ),
+            ],
           ),
-          Icon(
-            Icons.account_balance_wallet_outlined,
-            size: 30,
-          ),
-          SizedBox(
-            width: 5,
-          ),
-          Expanded(
-            child: Text(
-              "${typeBean.name}",
-              maxLines: 1,
-            ),
-            flex: 1,
-          ),
+            children: typeBean.parent!.map((e){
+              return Padding(
+                padding:  EdgeInsets.only(left: 20,top: 5,bottom: 5),
+                child: Row(
+                  // 父级菜单
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Icon(
+                      Icons.account_balance_wallet_outlined,
+                      size: 30,
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Expanded(
+                      child: textWidget(
+                          text: "${e.name}",
+                          maxLines: 1,
+                          textStyle: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                          )),
+                      flex: 1,
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          )
         ],
       ),
     );

@@ -126,7 +126,7 @@ class _ContentPageState extends State<ContentPage> {
                                 // 文本
                                 Expanded(
                                     child: Text(
-                                      "${knowledgeBean.text}",
+                                      "${knowledgeBean.title}",
                                       style: TextStyle(color: Colors.black),
                                     )),
                               ],
@@ -171,7 +171,7 @@ class _ContentPageState extends State<ContentPage> {
     );
   }
 
-  checkPosition(TypeBean typeBean) {
+  checkPosition(TypeLabelBean typeBean) {
     var indexWhere = knowData.indexWhere((element) {
       return element['type_bean'].id == typeBean.id;
     });

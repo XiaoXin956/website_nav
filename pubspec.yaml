@@ -43,6 +43,7 @@ dependencies:
   file_picker: ^6.1.1
   easy_refresh:
   url_strategy:
+  cached_network_image:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

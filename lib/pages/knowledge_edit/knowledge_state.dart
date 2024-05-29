@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:website_nav/bean/type_bean.dart';
-import 'package:website_nav/utils/date_tool.dart';
 
 class KnowledgeState extends Equatable {
   @override
@@ -54,7 +53,7 @@ class LabelTypeFailState extends KnowledgeState {
 class LabelTypeAddSuccessState extends KnowledgeState {
   final String type;
   final String msgSuccess;
-  final TypeBean? typeBean;
+  final TypeLabelBean? typeBean;
 
   LabelTypeAddSuccessState({required this.typeBean, required this.type, required this.msgSuccess});
 
@@ -65,7 +64,7 @@ class LabelTypeAddSuccessState extends KnowledgeState {
 // 查询
 class LabelTypeSearchSuccessState extends KnowledgeState {
   final String type;
-  final List<TypeBean> typeData;
+  final List<TypeLabelBean> typeData;
 
   LabelTypeSearchSuccessState({required this.typeData, required this.type});
 
@@ -74,7 +73,7 @@ class LabelTypeSearchSuccessState extends KnowledgeState {
 }
 
 class LabelTypeSelectChildState extends KnowledgeState {
-  final TypeBean? typeBean;
+  final TypeLabelBean? typeBean;
 
   LabelTypeSelectChildState({required this.typeBean});
 

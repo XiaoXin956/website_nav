@@ -20,7 +20,7 @@ class HomeInitEvent extends HomeEvent{
 
 class HomeMoveToPositionEvent extends HomeEvent{
 
-  final TypeBean typeBean;
+  final TypeLabelBean typeBean;
   HomeMoveToPositionEvent({required this.typeBean});
   @override
   List<Object?> get props => [typeBean];

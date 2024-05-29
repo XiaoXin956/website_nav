@@ -68,7 +68,11 @@ class LabelCubit extends Cubit<LabelState> {
       emit(LabelTypeFailState(msgFail: "${resultBean.msg}"));
     }
   }
-  
+
+  // 展开数据
+  reqExpandData({int index = -1}) async {
+    emit(LabelExpandState(index: index));
+  }
 
 
 }

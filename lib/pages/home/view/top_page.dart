@@ -3,12 +3,12 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:website_nav/bean/user_bean.dart';
 import 'package:website_nav/generated/l10n.dart';
+import 'package:website_nav/navigations/root_route.dart';
 import 'package:website_nav/pages/dialog/dialog_widgets.dart';
 import 'package:website_nav/pages/home/home_bloc.dart';
 import 'package:website_nav/pages/home/home_event.dart';
 import 'package:website_nav/pages/knowledge_edit/knowledge_view.dart';
-import 'package:website_nav/pages/login/login_bloc.dart';
-import 'package:website_nav/pages/login/login_event.dart';
+import 'package:website_nav/pages/login/login_cubit.dart';
 import 'package:website_nav/pages/login/login_state.dart';
 import 'package:website_nav/utils/date_tool.dart';
 import 'package:website_nav/utils/sp_utils.dart';
@@ -26,7 +26,7 @@ class TopPage extends StatefulWidget {
 class _TopPageState extends State<TopPage> {
 
   UserBean? userData;
-  LoginBloc? loginBloc;
+  LoginCubit? loginBloc;
   GlobalKey languageKey = GlobalKey();
   Offset languageOffset = Offset.zero;
 
@@ -37,18 +37,16 @@ class _TopPageState extends State<TopPage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-
-      context.read<LoginBloc>().add(LoginUserLoadEvent(map: {}));
-
+      context.read<LoginCubit>().loadUser();
     });
 
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
+    return BlocBuilder<LoginCubit, LoginState>(
       builder: (BuildContext context, state) {
-        loginBloc = context.read<LoginBloc>();
+        loginBloc = context.read<LoginCubit>();
         if (state is LoginUserSuccessState) {
           userData = state.userBean;
         }  else if (state is LoginUserLoadState) {
@@ -57,7 +55,6 @@ class _TopPageState extends State<TopPage> {
           removeDataAll();
           userData = null;
         }
-
         return Container(
           height: 60,
           child: Row(
@@ -78,7 +75,7 @@ class _TopPageState extends State<TopPage> {
                   html.window.open(url,"_blank");
                 },
                 child: Text(
-                  "${S.of(context).edit_data}",
+                  "${S.of(context).feedback}",
                   style: TextStyle(color: selectColor),
                 ),
               ),
@@ -95,6 +92,8 @@ class _TopPageState extends State<TopPage> {
                   // String url = "http://${html.window.location.host}/add_data";
                   // html.window.open(url,"_blank");
 
+                  // RootRouter().pushUrl(url: "add_data");
+
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return KnowledgePage();
                   }));
@@ -104,10 +103,6 @@ class _TopPageState extends State<TopPage> {
                   style: TextStyle(color: selectColor),
                 ),
               ),
-
-
-              // 外链接
-
               // 用户数据
               Container(
                 padding: EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
@@ -115,7 +110,7 @@ class _TopPageState extends State<TopPage> {
                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), border: Border.all(color: Colors.white, width: 2)),
                 child: Row(
                   children: [
-                    if (userData != null) Text("${userData?.name ?? userData?.email}"),
+                    if (userData != null) Text("${userData?.userName ?? userData?.userEmail}"),
                     if (userData == null)
                       InkWell(
                         onTap: () {
@@ -130,7 +125,7 @@ class _TopPageState extends State<TopPage> {
                     if (userData != null)
                       InkWell(
                         onTap: () {
-                          loginBloc?.add(LoginUserLogOutEvent(map: {}));
+                          loginBloc?.logOut();
                         },
                         child: Text("${S.of(context).log_out}"),
                       ),

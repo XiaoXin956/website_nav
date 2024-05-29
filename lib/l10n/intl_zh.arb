@@ -1,5 +1,5 @@
 {
-  "knowledge": "知识的港湾",
+  "knowledge": "收藏库",
   "language":"语言",
   "feedback":"意见反馈",
   "name": "名字",
@@ -8,6 +8,7 @@
   "login": "登录",
   "log_out": "退出",
   "user_name": "用户名",
+  "user_email": "邮箱",
   "password": "密码",
   "reg": "注册",
   "language_select": "语言选择",
@@ -15,5 +16,10 @@
   "type": "类型",
   "edit_data": "编辑数据",
   "please_select": "请选择",
-  "add_menu": "添加菜单"
+  "add_menu": "添加菜单",
+  "one_menu": "一级菜单",
+  "add_one_menu": "添加一级菜单",
+  "two_menu": "二级菜单",
+  "add_two_menu": "添加二级菜单"
 }
+

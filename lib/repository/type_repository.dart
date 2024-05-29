@@ -25,7 +25,7 @@ class TypeRepository extends ITypeRepository {
   @override
   Future<dynamic> addType(dynamic map) async {
     dynamic addTypeRead = await DioManager.getInstant().post(
-      path: "${Config.baseUrl}/add_type",
+      path: "${Config.baseUrl}/type_operation",
       data: map,
       options: Options(
         contentType: "application/json",
@@ -87,7 +87,7 @@ class TypeRepository extends ITypeRepository {
       dataRes = json.decode(updateTypeRead.data);
     }
     if (dataRes["code"] == 0) {
-      return ResultBean(code: dataRes["code"], msg: dataRes["msg"], data: TypeBean.fromJson(dataRes['data']));
+      return ResultBean(code: dataRes["code"], msg: dataRes["msg"], data: TypeLabelBean.fromJson(dataRes['data']));
     } else {
       return ResultBean(code: dataRes["code"], msg: dataRes["msg"]);
     }
@@ -97,7 +97,7 @@ class TypeRepository extends ITypeRepository {
   @override
   Future<dynamic> delType(dynamic map) async {
     dynamic delTypeRead = await DioManager.getInstant().post(
-      path: "${Config.baseUrl}/del_type",
+      path: "${Config.baseUrl}/type_operation",
       data: map,
       options: Options(
         contentType: "application/json",
@@ -122,7 +122,7 @@ class TypeRepository extends ITypeRepository {
   Future<ResultBean> searchType(dynamic map) async {
     try {
       Response searchTypeRead = await DioManager.getInstant().post(
-          path: "${Config.baseUrl}/search_type",
+          path: "${Config.baseUrl}/type_operation",
           data: map,
           options: Options(contentType: "application/json", headers: {"Access-Control-Allow-Credentials": true, "Access-Control-Allow-Origin": "*"}));
       dynamic dataRes = {};
@@ -132,7 +132,9 @@ class TypeRepository extends ITypeRepository {
         dataRes = json.decode(searchTypeRead.data);
       }
       if (dataRes["code"] == 0) {
-        List<TypeBean> data = (json.decode(dataRes['data']) as List<dynamic>).map((e) => TypeBean.fromJson(e)).toList();
+        List<TypeLabelBean> data = (dataRes['data'] as List<dynamic>).map((e){
+          return TypeLabelBean.fromJson(e);
+        }).toList();
         return ResultBean(code: dataRes["code"], msg: dataRes["msg"], data: data);
       } else {
         return ResultBean(code: dataRes["code"], msg: dataRes["msg"]);

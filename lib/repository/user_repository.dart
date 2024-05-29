@@ -11,17 +11,42 @@ import 'package:website_nav/utils/sp_utils.dart';
 
 abstract class IUserRepository{
 
+  Future<ResultBean> userOperation(dynamic map);
+
   Future<ResultBean> userReg(dynamic map);
-  Future<ResultBean> userUpdate(dynamic map);
   Future<ResultBean> userLogin(dynamic map);
 
 }
 
 class UserRepository extends IUserRepository{
+
+  @override
+  Future<ResultBean> userOperation(map) async {
+    dynamic userReg = await DioManager.getInstant().post(
+      path: "${Config.baseUrl}/user_operation",
+      data: map,
+      options: Options(
+        contentType: "application/json",
+        headers: {"Access-Control-Allow-Credentials": true, "Access-Control-Allow-Origin": "*"},
+      ),
+    );
+    dynamic dataRes = {};
+    if (userReg.data is Map) {
+      dataRes = userReg.data;
+    } else {
+      dataRes = json.decode(userReg.data);
+    }
+    if (dataRes["code"] == 0) {
+      return ResultBean(code: dataRes["code"], msg: dataRes["msg"], data: UserBean.fromJson(dataRes['data']));
+    } else {
+      return ResultBean(code: dataRes["code"], msg: dataRes["msg"]);
+    }
+  }
+
   @override
   Future<ResultBean> userReg(map) async {
     dynamic userReg = await DioManager.getInstant().post(
-      path: "${Config.baseUrl}/user_reg",
+      path: "${Config.baseUrl}/user_operation",
       data: map,
       options: Options(
         contentType: "application/json",
@@ -45,7 +70,7 @@ class UserRepository extends IUserRepository{
   @override
   Future<ResultBean> userLogin(map) async {
     dynamic userLogin = await DioManager.getInstant().post(
-      path: "${Config.baseUrl}/user_login",
+      path: "${Config.baseUrl}/user_operation",
       data: map,
       options: Options(
         contentType: "application/json",
@@ -66,27 +91,5 @@ class UserRepository extends IUserRepository{
     }
   }
 
-  @override
-  Future<ResultBean> userUpdate(map) async {
-    dynamic userUpdate = await DioManager.getInstant().post(
-      path: "${Config.baseUrl}/user_update",
-      data: map,
-      options: Options(
-        contentType: "application/json",
-        headers: {"Access-Control-Allow-Credentials": true, "Access-Control-Allow-Origin": "*"},
-      ),
-    );
-    dynamic dataRes = {};
-    if (userUpdate.data is Map) {
-      dataRes = userUpdate.data;
-    } else {
-      dataRes = json.decode(userUpdate.data);
-    }
-    if (dataRes["code"] == 0) {
-      return ResultBean(code: dataRes["code"], msg: dataRes["msg"], data: UserBean.fromJson(dataRes['data']));
-    } else {
-      return ResultBean(code: dataRes["code"], msg: dataRes["msg"]);
-    }
-  }
 
 }

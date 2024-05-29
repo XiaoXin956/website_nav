@@ -62,3 +62,10 @@ class LoginUserLogOutState extends LoginState{
   LoginUserLogOutState();
 
 }
+
+
+class LoginDismissMsgState extends LoginState{
+
+  LoginDismissMsgState();
+
+}

@@ -8,7 +8,7 @@ part 'click_state.dart';
 class ClickCubit extends Cubit<ClickState> {
   ClickCubit() : super(ClickInitial());
 
-  moveToPosition(TypeBean typeBean){
+  moveToPosition(TypeLabelBean typeBean){
     emit(ClickMoveToPositionState(typeBean: typeBean));
   }
 

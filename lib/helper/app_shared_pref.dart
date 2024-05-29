@@ -14,4 +14,8 @@ class AppSharedPref{
     return UserBean.fromJson(json.decode(localUser))  ;
   }
 
+  Future clearUserModel() async {
+    await removeData("local_user");
+  }
+
 }
