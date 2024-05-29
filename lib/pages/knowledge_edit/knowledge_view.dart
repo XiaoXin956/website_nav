@@ -73,7 +73,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
           typeChildData.clear();
           typeChildData.addAll(state.typeData);
         } else if (state is LabelTypeAddSuccessState) {
-          knowledgeCubit?.reqSearchType(data: {"type": "child"});
+          knowledgeCubit?.reqSearchType(data: {"type": "search"});
           context.read<LabelCubit>().searchAllType({"type": "search"});
           context.read<KnowledgeCubit>().reqSearchAllKnowledgeData(data: {"type": "search"});
           //  添加成功
@@ -84,10 +84,10 @@ class _KnowledgePageState extends State<KnowledgePage> {
           });
           // 获取成功
           // knowledgeCubit?.add(LabelSearchEvent(data: {"type": "child"}));
-          knowledgeCubit?.reqSearchType(data: {"type": "child"});
+          knowledgeCubit?.reqSearchType(data: {"type": "search"});
         } else if (state is KnowledgeAddSuccessState) {
           context.read<LabelCubit>().searchAllType({"type": "search"});
-          knowledgeCubit?.reqSearchType(data: {"type": "child"});
+          knowledgeCubit?.reqSearchType(data: {"type": "search"});
           // knowledgeCubit?.add(KnowledgeInitEvent());
           // 资源添加成功
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -216,7 +216,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
                                     ),
                                     IconButton(
                                         onPressed: () {
-                                          knowledgeCubit?.reqSearchType(data: {"type": "child"});
+                                          knowledgeCubit?.reqSearchType(data: {"type": "search"});
                                         },
                                         icon: Icon(Icons.refresh)),
                                   ],
