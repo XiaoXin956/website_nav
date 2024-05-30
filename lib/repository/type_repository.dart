@@ -14,8 +14,6 @@ abstract class ITypeRepository {
 
   Future<dynamic> delType(dynamic map);
 
-  Future<dynamic> searchTypeChild(dynamic map);
-
   Future<dynamic> searchType(dynamic map);
 
 }
@@ -38,32 +36,8 @@ class TypeRepository extends ITypeRepository {
     } else {
       dataRes = json.decode(addTypeRead.data);
     }
-    if (dataRes["code"] == "0") {
-      return ResultBean(code: int.parse(dataRes["code"]), msg: dataRes["msg"], data: null);
-    } else {
-      return ResultBean(code: dataRes["code"], msg: dataRes["msg"]);
-    }
-  }
-
-  // 查询
-  @override
-  Future<dynamic> searchTypeChild(dynamic map) async {
-    dynamic searchTypeRead = await DioManager.getInstant().post(
-      path: "${Config.baseUrl}/search_type",
-      data: map,
-      options: Options(
-        contentType: "application/json",
-        headers: {"Access-Control-Allow-Credentials": true, "Access-Control-Allow-Origin": "*"},
-      ),
-    );
-    dynamic dataRes = {};
-    if (searchTypeRead.data is Map) {
-      dataRes = searchTypeRead.data;
-    } else {
-      dataRes = json.decode(searchTypeRead.data);
-    }
-    if (dataRes["code"] == "0") {
-      return ResultBean(code: int.parse(dataRes["code"]), msg: dataRes["msg"], data: null);
+    if (dataRes["code"] == 0) {
+      return ResultBean(code: dataRes["code"], msg: dataRes["msg"], data: TypeLabelBean.fromJson(dataRes['data']));
     } else {
       return ResultBean(code: dataRes["code"], msg: dataRes["msg"]);
     }

@@ -51,14 +51,13 @@ class LabelTypeFailState extends KnowledgeState {
 
 // 类型添加成功
 class LabelTypeAddSuccessState extends KnowledgeState {
-  final String type;
   final String msgSuccess;
   final TypeLabelBean? typeBean;
 
-  LabelTypeAddSuccessState({required this.typeBean, required this.type, required this.msgSuccess});
+  LabelTypeAddSuccessState({required this.typeBean, required this.msgSuccess});
 
   @override
-  List<Object?> get props => [typeBean, type, msgSuccess];
+  List<Object?> get props => [typeBean, msgSuccess];
 }
 
 // 查询
@@ -71,6 +70,35 @@ class LabelTypeSearchSuccessState extends KnowledgeState {
   @override
   List<Object?> get props => [typeData];
 }
+// 查询子标签
+class LabelTypeSearchChildSuccessState extends KnowledgeState {
+
+  final List<TypeLabelBean> typeData;
+  LabelTypeSearchChildSuccessState({required this.typeData});
+
+  @override
+  List<Object?> get props => [typeData];
+}
+// 查询子标签异常
+class LabelTypeSearchChildFailState extends KnowledgeState {
+  final String msgFail;
+  final dynamic timestamp;
+
+  LabelTypeSearchChildFailState({required this.timestamp, required this.msgFail});
+
+  @override
+  List<Object?> get props => [timestamp,msgFail];
+}
+
+class LabelTypeSelectParentState extends KnowledgeState {
+  final TypeLabelBean? typeBean;
+
+  LabelTypeSelectParentState({required this.typeBean});
+
+  @override
+  List<Object?> get props => [typeBean];
+}
+
 
 class LabelTypeSelectChildState extends KnowledgeState {
   final TypeLabelBean? typeBean;

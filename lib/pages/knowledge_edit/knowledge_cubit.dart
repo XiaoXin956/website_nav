@@ -21,20 +21,25 @@ class KnowledgeCubit extends Cubit<KnowledgeState> {
   }
 
   reqKnowledgeTypeAdd({dynamic data}) async {
-    if (data.toString().length > 30) {
+    if (data["name"].toString().length > 30) {
       emit(LabelTypeFailState(msgFail: "类型名称不能超过30个字符", timestamp: DateTool.timestamp()));
       return;
     }
     ResultBean resultBean = await typeRepository.addType(data);
     if (resultBean.code == 0) {
-      emit(LabelTypeAddSuccessState(type: data['type'], msgSuccess: resultBean.msg.toString(), typeBean: null));
+      emit(LabelTypeAddSuccessState( msgSuccess: resultBean.msg.toString(), typeBean: resultBean.data));
     } else {
       emit(LabelTypeFailState(msgFail: "${resultBean.msg}", timestamp: DateTool.timestamp()));
     }
   }
 
   // 选择类型
-  selectKnowledgeType({required TypeLabelBean typeBean}) {
+  selectParentType({required TypeLabelBean typeBean}) {
+    emit(LabelTypeSelectParentState(typeBean: typeBean));
+  }
+
+  // 选择类型
+  selectChildType({required TypeLabelBean typeBean}) {
     emit(LabelTypeSelectChildState(typeBean: typeBean));
   }
 
@@ -45,6 +50,16 @@ class KnowledgeCubit extends Cubit<KnowledgeState> {
       emit(LabelTypeSearchSuccessState(type: "${data['type']}", typeData: resultBean.data));
     } else {
       emit(LabelTypeFailState(msgFail: "${resultBean.msg}", timestamp: DateTool.timestamp()));
+    }
+  }
+
+  // 查询子标签
+  reqSearchChildType({dynamic data}) async {
+    ResultBean resultBean = await typeRepository.searchType(data);
+    if (resultBean.code == 0) {
+      emit(LabelTypeSearchChildSuccessState( typeData: resultBean.data));
+    } else {
+      emit(LabelTypeSearchChildFailState(msgFail: "${resultBean.msg}", timestamp: DateTool.timestamp()));
     }
   }
 

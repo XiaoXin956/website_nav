@@ -1,8 +1,8 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,7 +13,6 @@ import 'package:website_nav/pages/label/label_cubit.dart';
 import 'package:website_nav/utils/print_utils.dart';
 import 'package:website_nav/widgets/custom_widget.dart';
 import 'package:website_nav/widgets/edit_widget.dart';
-import 'package:website_nav/widgets/fixed_size_grid_delegate.dart';
 
 import 'knowledge_state.dart';
 
@@ -27,17 +26,19 @@ class KnowledgePage extends StatefulWidget {
 
 class _KnowledgePageState extends State<KnowledgePage> {
   KnowledgeCubit? knowledgeCubit;
-  TypeLabelBean? selectChildValue;
+  TypeLabelBean? selectParentLabel;
+  TypeLabelBean? selectChildLabel;
 
   String oneMenuName = "";
   String twoMenuName = "";
 
+  List<TypeLabelBean> typeParentData = [];
   List<TypeLabelBean> typeChildData = [];
 
   TextEditingController _textEditingController = TextEditingController();
   TextEditingController _urlEditingController = TextEditingController();
   TextEditingController _labelEditingController = TextEditingController();
-  TextEditingController _describeEditingController = TextEditingController();
+  TextEditingController _infoEditingController = TextEditingController();
 
   String imageUrl = "";
   bool uploadLoading = false;
@@ -49,7 +50,6 @@ class _KnowledgePageState extends State<KnowledgePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       knowledgeCubit?.reqSearchType(data: {"type": "search"});
-      // knowledgeBloc?.add(LabelSearchEvent(data: {"type": "child"}));
     });
   }
 
@@ -59,8 +59,19 @@ class _KnowledgePageState extends State<KnowledgePage> {
       builder: (BuildContext context, state) {
         knowledgeCubit = context.read<KnowledgeCubit>();
         if (state is KnowledgeInitState) {
+        } else if (state is LabelTypeSelectParentState) {
+          // 选择了父标签
+          selectParentLabel = state.typeBean;
+          // typeChildData.clear();
+          // typeChildData.addAll(selectParentLabel!.parent!);
+
+          // 重新获取子标签
+          knowledgeCubit?.reqSearchChildType(data: {"type": "search_child", "parent_id": selectParentLabel?.id});
+
+          selectChildLabel = null;
         } else if (state is LabelTypeSelectChildState) {
-          selectChildValue = state.typeBean;
+          // 选择了子标签
+          selectChildLabel = state.typeBean;
         } else if (state is LabelTypeFailState) {
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             ScaffoldMessenger.of(context).clearSnackBars();
@@ -70,10 +81,23 @@ class _KnowledgePageState extends State<KnowledgePage> {
           context.read<LabelCubit>().reqSearchLabel({"type": "search"});
           context.read<KnowledgeCubit>().reqSearchAllKnowledgeData(data: {"type": "search"});
           // 获取成功
+          typeParentData.clear();
+          typeParentData.addAll(state.typeData);
+        } else if (state is LabelTypeSearchChildSuccessState) {
+          // 获取子标签成功
           typeChildData.clear();
           typeChildData.addAll(state.typeData);
+          selectChildLabel = typeChildData.isNotEmpty ? typeChildData[0] : null;
         } else if (state is LabelTypeAddSuccessState) {
-          knowledgeCubit?.reqSearchType(data: {"type": "search"});
+          if (state.typeBean?.parentId == 0) {
+            // 这个是一级菜单
+            typeParentData.add(state.typeBean!);
+          } else {
+            // 这个是二级菜单
+            // 直接添加到数据
+            typeChildData.add(state.typeBean!);
+          }
+          // 外部刷新
           context.read<LabelCubit>().searchAllType({"type": "search"});
           context.read<KnowledgeCubit>().reqSearchAllKnowledgeData(data: {"type": "search"});
           //  添加成功
@@ -82,9 +106,6 @@ class _KnowledgePageState extends State<KnowledgePage> {
             ScaffoldMessenger.of(context).clearSnackBars();
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msgSuccess)));
           });
-          // 获取成功
-          // knowledgeCubit?.add(LabelSearchEvent(data: {"type": "child"}));
-          knowledgeCubit?.reqSearchType(data: {"type": "search"});
         } else if (state is KnowledgeAddSuccessState) {
           context.read<LabelCubit>().searchAllType({"type": "search"});
           knowledgeCubit?.reqSearchType(data: {"type": "search"});
@@ -135,170 +156,312 @@ class _KnowledgePageState extends State<KnowledgePage> {
           child: ListView(
             children: [
               // 上方显示类型，
-              Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                          child: Container(
-                        height: 200.h,
-                        alignment: Alignment.topCenter,
-                        margin: EdgeInsets.all(10),
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.black,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+              Container(
+                alignment: Alignment.topCenter,
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.red,
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(10)),
+                child: LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints constraints) {
+                    if (constraints.maxWidth > 600) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: Row(
                               children: [
-                                Text("  ${S.of(context).one_menu}  "),
-                                Expanded(
+                                SizedBox(
+                                  width: 200,
+                                  height: 50,
                                   child: customTextField(
+                                      hintText: "${S.of(context).one_menu}",
                                       onChanged: (value) {
                                         oneMenuName = value;
                                       }),
                                 ),
+                                w(10),
+                                ElevatedButton(
+                                    onPressed: () {
+                                      knowledgeCubit?.reqKnowledgeTypeAdd(data: {
+                                        "type": "add",
+                                        "name": oneMenuName,
+                                      });
+                                    },
+                                    child: textWidget(text: "${S.of(context).add_one_menu}", textStyle: TextStyle(fontSize: 14))),
+                                w(10),
                               ],
                             ),
-                            h(10),
-                            ElevatedButton(
-                              // style: ButtonStyle(
-                              //   shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
-                              // ),
-                                onPressed: () {
-                                  knowledgeCubit?.reqKnowledgeTypeAdd(data: {
-                                    "type": "add",
-                                    "name": oneMenuName,
-                                  });
-                                },
-                                child: textWidget(text: "${S.of(context).add_one_menu}",textStyle: TextStyle(fontSize: 14))),
-                          ],
-                        ),
-                      )),
-                      Expanded(
-                        flex: 3,
-                        child: Container(
-                          height: 200,
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.black,
-                                width: 2,
-                              ),
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          ),
+                          Expanded(
+                              child: Row(
                             children: [
-                              Padding(
-                                padding: EdgeInsets.all(10),
-                                child: Column(
-                                  children: [
-                                    Text("${S.of(context).type}"),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    InkWell(
-                                      onTap: () {
-                                        // 进行编辑操作
-                                        // knowledgeCubit?.add(KnowledgeEditTypeEvent(isEdit: _edit));
-                                        knowledgeCubit?.editType(isEdit: _edit);
-                                      },
-                                      child: Text(
-                                        (_edit) ? "${S.of(context).complete}" : "${S.of(context).edit}",
-                                        style: TextStyle(color: Colors.blue),
+                              w(10),
+                              SizedBox(
+                                width: 200,
+                                height: 50,
+                                child: customTextField(
+                                    hintText: "${S.of(context).two_menu}",
+                                    onChanged: (value) {
+                                      twoMenuName = value;
+                                    }),
+                              ),
+                              ElevatedButton(
+                                  onPressed: () {
+                                    if (selectParentLabel == null) {
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: textWidget(text: "请选择一级菜单")));
+                                      return;
+                                    }
+                                    knowledgeCubit?.reqKnowledgeTypeAdd(data: {
+                                      "type": "add",
+                                      "name": twoMenuName,
+                                      "parent_id": selectParentLabel?.id,
+                                    });
+                                  },
+                                  child: textWidget(text: "${S.of(context).add_two_menu}", textStyle: TextStyle(fontSize: 14))),
+                            ],
+                          ))
+                        ],
+                      );
+                    } else {
+                      return Column(
+                        children: [
+                          customTextField(
+                              hintText: "${S.of(context).one_menu}",
+                              onChanged: (value) {
+                                oneMenuName = value;
+                              }),
+                          h(10),
+                          ElevatedButton(
+                              onPressed: () {
+                                knowledgeCubit?.reqKnowledgeTypeAdd(data: {
+                                  "type": "add",
+                                  "name": oneMenuName,
+                                });
+                              },
+                              child: textWidget(text: "${S.of(context).add_one_menu}", textStyle: TextStyle(fontSize: 14))),
+                          h(10),
+                          customTextField(
+                              hintText: "${S.of(context).two_menu}",
+                              onChanged: (value) {
+                                oneMenuName = value;
+                              }),
+                          w(10),
+                          ElevatedButton(
+                              onPressed: () {
+                                knowledgeCubit?.reqKnowledgeTypeAdd(data: {
+                                  "type": "add",
+                                  "name": twoMenuName,
+                                });
+                              },
+                              child: textWidget(text: "${S.of(context).add_two_menu}", textStyle: TextStyle(fontSize: 14))),
+                        ],
+                      );
+                    }
+                  },
+                ),
+              ),
+              // 标签类型
+              Container(
+                height: 350,
+                margin: EdgeInsets.only(top: 10.h),
+                padding: EdgeInsets.all(10.h),
+                decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.green,
+                      width: 2,
+                    ),
+                    borderRadius: BorderRadius.circular(10)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        children: [
+                          Text("${S.of(context).type}"),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              // 进行编辑操作
+                              // knowledgeCubit?.add(KnowledgeEditTypeEvent(isEdit: _edit));
+                              knowledgeCubit?.editType(isEdit: _edit);
+                            },
+                            child: Text(
+                              (_edit) ? "${S.of(context).complete}" : "${S.of(context).edit}",
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                          ),
+                          IconButton(
+                              onPressed: () {
+                                knowledgeCubit?.reqSearchType(data: {"type": "search"});
+                              },
+                              icon: Icon(Icons.refresh)),
+                        ],
+                      ),
+                    ),
+                    // 表格列表选中
+                    Expanded(
+                        child: ListView(
+                      children: [
+                        // Row(
+                        //   children: [
+                        //     textWidget(text: "父菜单"),
+                        //     w(10),
+                        //     Expanded(child: customTextField(
+                        //       onChanged: (value){
+                        //         // 进行筛选
+                        //
+                        //       },
+                        //     ),)
+                        //   ],
+                        // ),
+                        GridView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          scrollDirection: Axis.vertical,
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio: 3, crossAxisCount: MediaQuery.of(context).size.width ~/ 150),
+                          itemCount: typeParentData.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            TypeLabelBean selectValueTemp = typeParentData[index];
+                            return Stack(
+                              children: [
+                                Container(
+                                  width: double.maxFinite,
+                                  height: double.maxFinite,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      knowledgeCubit?.selectParentType(typeBean: typeParentData[index]);
+                                    },
+                                    child: Container(
+                                      height: 60,
+                                      width: 60,
+                                      padding: EdgeInsets.only(left: 6, right: 6),
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(10),
+                                          color: (selectParentLabel != null && selectParentLabel!.id == selectValueTemp.id) ? Colors.blue : Colors.white,
+                                          border: Border.all(color: (selectParentLabel != null && selectParentLabel!.id == selectValueTemp.id) ? Colors.white : Colors.grey, width: 1)),
+                                      margin: EdgeInsets.all(2),
+                                      child: Row(
+                                        children: [
+                                          // 图标
+                                          Icon(
+                                            Icons.account_balance_rounded,
+                                            size: 20,
+                                          ),
+                                          // 文本
+                                          Expanded(
+                                              child: Text(
+                                            "${typeParentData[index].name}",
+                                            style: TextStyle(color: (selectParentLabel != null && selectParentLabel!.id == selectValueTemp.id) ? Colors.white : Colors.black),
+                                          )),
+                                        ],
                                       ),
                                     ),
-                                    IconButton(
-                                        onPressed: () {
-                                          knowledgeCubit?.reqSearchType(data: {"type": "search"});
-                                        },
-                                        icon: Icon(Icons.refresh)),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                              // 表格列表选中
-                              Expanded(
-                                  child: GridView.builder(
-                                gridDelegate: FixedSizeGridDelegate(100, 50, mainAxisSpacing: 10),
-                                itemCount: typeChildData.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  TypeLabelBean selectValueTemp = typeChildData[index];
-                                  return Stack(
-                                    children: [
-                                      Container(
-                                        width: double.maxFinite,
-                                        height: double.maxFinite,
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            // knowledgeCubit?.add(LabelTypeSelectChildEvent(typeBean: typeChildData[index]));
-                                            knowledgeCubit?.selectKnowledgeType(typeBean: typeChildData[index]);
-                                          },
-                                          child: Container(
-                                            height: 60,
-                                            width: 60,
-                                            padding: EdgeInsets.only(left: 6, right: 6),
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(10),
-                                                color: (selectChildValue != null && selectChildValue!.id == selectValueTemp.id) ? Colors.blue : Colors.white,
-                                                border: Border.all(color: (selectChildValue != null && selectChildValue!.id == selectValueTemp.id) ? Colors.white : Colors.grey, width: 1)),
-                                            margin: EdgeInsets.all(2),
-                                            child: Row(
-                                              children: [
-                                                // 图标
-                                                Icon(
-                                                  Icons.account_balance_rounded,
+                                Positioned(
+                                    right: 0,
+                                    top: 0,
+                                    child: AnimatedSwitcher(
+                                        duration: Duration(milliseconds: 500),
+                                        child: (_edit)
+                                            ? GestureDetector(
+                                                onTap: () {
+                                                  knowledgeCubit?.delType(data: {"id": selectValueTemp.id, "type": "del"});
+                                                },
+                                                child: Icon(
+                                                  Icons.cancel_outlined,
+                                                  color: Colors.grey,
                                                   size: 20,
                                                 ),
-                                                // 文本
-                                                Expanded(
-                                                    child: Text(
-                                                  "${typeChildData[index].name}",
-                                                  style: TextStyle(color: (selectChildValue != null && selectChildValue!.id == selectValueTemp.id) ? Colors.white : Colors.black),
-                                                )),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                          right: 0,
-                                          top: 0,
-                                          child: AnimatedSwitcher(
-                                              duration: Duration(seconds: 1),
-                                              child: (_edit)
-                                                  ? GestureDetector(
-                                                      onTap: () {
-                                                        knowledgeCubit?.delType(data: {"id": selectValueTemp.id,"type":"del"});
-                                                      },
-                                                      child: Icon(
-                                                        Icons.cancel_outlined,
-                                                        color: Colors.red,
-                                                        size: 20,
-                                                      ),
-                                                    )
-                                                  : Container()))
-                                    ],
-                                  );
-                                },
-                              )),
-                            ],
-                          ),
+                                              )
+                                            : Container()))
+                              ],
+                            );
+                          },
                         ),
-                      )
-                    ],
-                  ),
-                ],
+                        h(20),
+                        GridView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          scrollDirection: Axis.vertical,
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio: 3, crossAxisCount: MediaQuery.of(context).size.width ~/ 150),
+                          itemCount: typeChildData.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            TypeLabelBean selectValueTemp = typeChildData[index];
+                            return Stack(
+                              children: [
+                                Container(
+                                  width: double.maxFinite,
+                                  height: double.maxFinite,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      knowledgeCubit?.selectChildType(typeBean: selectValueTemp);
+                                    },
+                                    child: Container(
+                                      height: 60,
+                                      width: 60,
+                                      padding: EdgeInsets.only(left: 6, right: 6),
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(10),
+                                          color: (selectChildLabel != null && selectChildLabel!.id == selectValueTemp.id) ? Colors.blue : Colors.white,
+                                          border: Border.all(color: (selectChildLabel != null && selectChildLabel!.id == selectValueTemp.id) ? Colors.white : Colors.grey, width: 1)),
+                                      margin: EdgeInsets.all(2),
+                                      child: Row(
+                                        children: [
+                                          // 图标
+                                          Icon(
+                                            Icons.account_balance_rounded,
+                                            size: 20,
+                                          ),
+                                          // 文本
+                                          Expanded(
+                                              child: Text(
+                                            "${typeChildData[index].name}",
+                                            style: TextStyle(color: (selectChildLabel != null && selectChildLabel!.id == selectValueTemp.id) ? Colors.white : Colors.black),
+                                          )),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                    right: 0,
+                                    top: 0,
+                                    child: AnimatedSwitcher(
+                                        duration: Duration(milliseconds: 500),
+                                        child: (_edit)
+                                            ? GestureDetector(
+                                                onTap: () {
+                                                  knowledgeCubit?.delType(data: {"id": selectValueTemp.id, "type": "del"});
+                                                },
+                                                child: Icon(
+                                                  Icons.cancel_outlined,
+                                                  color: Colors.grey,
+                                                  size: 20,
+                                                ),
+                                              )
+                                            : Container()))
+                              ],
+                            );
+                          },
+                        )
+                      ],
+                    )),
+                  ],
+                ),
               ),
 
               SizedBox(
                 height: 10,
               ),
+
               // 下方内容
               Container(
                 child: Column(
@@ -318,7 +481,6 @@ class _KnowledgePageState extends State<KnowledgePage> {
                                   decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.lightBlueAccent, width: 2))),
                                   onChanged: (value) {
                                     _textEditingController.text = value;
-
                                     _textEditingController.selection = TextSelection(baseOffset: _textEditingController.text.length, extentOffset: _textEditingController.text.length);
                                   },
                                 )),
@@ -379,12 +541,12 @@ class _KnowledgePageState extends State<KnowledgePage> {
                                 Text('描述：'),
                                 Expanded(
                                     child: TextField(
-                                  controller: _describeEditingController,
+                                  controller: _infoEditingController,
                                   textAlign: TextAlign.start,
                                   decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.lightBlueAccent, width: 2))),
                                   onChanged: (value) {
-                                    _describeEditingController.text = value;
-                                    _describeEditingController.selection = TextSelection(baseOffset: _describeEditingController.text.length, extentOffset: _describeEditingController.text.length);
+                                    _infoEditingController.text = value;
+                                    _infoEditingController.selection = TextSelection(baseOffset: _infoEditingController.text.length, extentOffset: _infoEditingController.text.length);
                                   },
                                 )),
                               ],
@@ -445,8 +607,8 @@ class _KnowledgePageState extends State<KnowledgePage> {
                             "url": "${_urlEditingController.text}",
                             "label": "${_labelEditingController.text}",
                             "img_url": "$imageUrl",
-                            "type_id": selectChildValue?.id,
-                            "describe": "${selectChildValue?.id}",
+                            "type_id": selectChildLabel?.id,
+                            "info": "${_infoEditingController.text}",
                           });
                         },
                         child: Text("添加")),
