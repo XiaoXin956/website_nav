@@ -62,12 +62,8 @@ class _KnowledgePageState extends State<KnowledgePage> {
         } else if (state is LabelTypeSelectParentState) {
           // 选择了父标签
           selectParentLabel = state.typeBean;
-          // typeChildData.clear();
-          // typeChildData.addAll(selectParentLabel!.parent!);
-
           // 重新获取子标签
           knowledgeCubit?.reqSearchChildType(data: {"type": "search_child", "parent_id": selectParentLabel?.id});
-
           selectChildLabel = null;
         } else if (state is LabelTypeSelectChildState) {
           // 选择了子标签
@@ -83,6 +79,9 @@ class _KnowledgePageState extends State<KnowledgePage> {
           // 获取成功
           typeParentData.clear();
           typeParentData.addAll(state.typeData);
+          selectParentLabel = typeParentData.isNotEmpty ? typeParentData[0] : null;
+          // 查询第一个子标签
+          knowledgeCubit?.reqSearchChildType(data: {"type": "search_child", "parent_id": selectParentLabel?.id});
         } else if (state is LabelTypeSearchChildSuccessState) {
           // 获取子标签成功
           typeChildData.clear();
@@ -107,6 +106,13 @@ class _KnowledgePageState extends State<KnowledgePage> {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msgSuccess)));
           });
         } else if (state is KnowledgeAddSuccessState) {
+
+          _textEditingController.text="";
+          _urlEditingController.text="";
+          _labelEditingController.text="";
+          _infoEditingController.text="";
+          imageUrl="";
+
           context.read<LabelCubit>().searchAllType({"type": "search"});
           knowledgeCubit?.reqSearchType(data: {"type": "search"});
           // knowledgeCubit?.add(KnowledgeInitEvent());
@@ -140,6 +146,14 @@ class _KnowledgePageState extends State<KnowledgePage> {
           uploadLoading = true;
         } else if (state is KnowledgeUploadIconFailState) {
           uploadLoading = false;
+        } else if (state is KnowledgeDelSuccessState) {
+          // selectParentLabel = null;
+          selectChildLabel = null;
+          if(state.delType==0){
+            knowledgeCubit?.reqSearchType(data: {"type": "search"});
+          }else{
+            knowledgeCubit?.reqSearchChildType(data: {"type": "search_child", "parent_id": selectParentLabel?.id});
+          }
         }
         return _buildPage(context);
       },
@@ -300,6 +314,8 @@ class _KnowledgePageState extends State<KnowledgePage> {
                           IconButton(
                               onPressed: () {
                                 knowledgeCubit?.reqSearchType(data: {"type": "search"});
+                                // 重新获取子标签
+                                knowledgeCubit?.reqSearchChildType(data: {"type": "search_child", "parent_id": selectParentLabel?.id});
                               },
                               icon: Icon(Icons.refresh)),
                         ],
@@ -373,11 +389,11 @@ class _KnowledgePageState extends State<KnowledgePage> {
                                         child: (_edit)
                                             ? GestureDetector(
                                                 onTap: () {
-                                                  knowledgeCubit?.delType(data: {"id": selectValueTemp.id, "type": "del"});
+                                                  knowledgeCubit?.delParentType(data: {"id": selectValueTemp.id, "type": "del"});
                                                 },
                                                 child: Icon(
                                                   Icons.cancel_outlined,
-                                                  color: Colors.grey,
+                                                  color: Colors.red,
                                                   size: 20,
                                                 ),
                                               )
@@ -432,22 +448,18 @@ class _KnowledgePageState extends State<KnowledgePage> {
                                   ),
                                 ),
                                 Positioned(
-                                    right: 0,
-                                    top: 0,
-                                    child: AnimatedSwitcher(
-                                        duration: Duration(milliseconds: 500),
-                                        child: (_edit)
-                                            ? GestureDetector(
-                                                onTap: () {
-                                                  knowledgeCubit?.delType(data: {"id": selectValueTemp.id, "type": "del"});
-                                                },
-                                                child: Icon(
-                                                  Icons.cancel_outlined,
-                                                  color: Colors.grey,
-                                                  size: 20,
-                                                ),
-                                              )
-                                            : Container()))
+                                  right: 0,
+                                  top: 0,
+                                  child: AnimatedSwitcher(
+                                      duration: Duration(milliseconds: 500),
+                                      child: (_edit)
+                                          ? GestureDetector(
+                                              onTap: () {
+                                                knowledgeCubit?.delChildType(data: {"id": selectValueTemp.id, "type": "del"});
+                                              },
+                                              child: Icon(Icons.cancel_outlined, color: Colors.red, size: 20))
+                                          : Container()),
+                                )
                               ],
                             );
                           },
@@ -589,7 +601,7 @@ class _KnowledgePageState extends State<KnowledgePage> {
                                     // File file = File(result.files, result.files.single.name);
                                     printRed(file.path);
                                     // 进行图片上传
-                                    Map<String, dynamic> data = {"image": await MultipartFile.fromBytes(result.files.single.bytes as List<int>, filename: result.files.single.name)};
+                                    Map<String, dynamic> data = {"image": MultipartFile.fromBytes(result.files.single.bytes as List<int>, filename: result.files.single.name)};
                                     knowledgeCubit?.uploadIcon(data: data);
                                   }
                                 },
@@ -603,12 +615,13 @@ class _KnowledgePageState extends State<KnowledgePage> {
                         onPressed: () {
                           knowledgeCubit?.reqAddKnowledgeData(data: {
                             "type": "add",
-                            "text": "${_textEditingController.text}",
+                            "title": "${_textEditingController.text}",
                             "url": "${_urlEditingController.text}",
                             "label": "${_labelEditingController.text}",
                             "img_url": "$imageUrl",
-                            "type_id": selectChildLabel?.id,
                             "info": "${_infoEditingController.text}",
+                            "type_parent_id": "${selectParentLabel?.id}",
+                            "type_child_id": "${selectChildLabel?.id}",
                           });
                         },
                         child: Text("添加")),

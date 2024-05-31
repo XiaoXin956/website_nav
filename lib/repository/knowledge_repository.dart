@@ -23,7 +23,7 @@ class KnowledgeRepository extends IKnowledgeRepository{
   @override
   Future addKnowledge(map) async {
     dynamic addTypeRead = await DioManager.getInstant().post(
-      path: "${Config.baseUrl}/knowledge",
+      path: "${Config.baseUrl}/knowledge_operation",
       data: map,
       options: Options(
         contentType: "application/json",

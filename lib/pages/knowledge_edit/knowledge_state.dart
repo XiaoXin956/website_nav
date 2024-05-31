@@ -29,6 +29,16 @@ class KnowledgeSuccessState extends KnowledgeState {
   List<Object?> get props => [msgSuccess];
 }
 
+class KnowledgeDelSuccessState extends KnowledgeState {
+  int delType;
+  final String msgSuccess;
+
+  KnowledgeDelSuccessState({required this.msgSuccess, required this.delType});
+
+  @override
+  List<Object?> get props => [msgSuccess,delType];
+}
+
 class KnowledgeFailState extends KnowledgeState {
   final String msgFail;
 

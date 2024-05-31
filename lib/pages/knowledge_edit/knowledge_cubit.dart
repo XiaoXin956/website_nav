@@ -46,7 +46,7 @@ class KnowledgeCubit extends Cubit<KnowledgeState> {
   // 查询类型
   reqSearchType({dynamic data}) async {
     ResultBean resultBean = await typeRepository.searchType(data);
-    if (resultBean.code == 0) {
+     if (resultBean.code == 0) {
       emit(LabelTypeSearchSuccessState(type: "${data['type']}", typeData: resultBean.data));
     } else {
       emit(LabelTypeFailState(msgFail: "${resultBean.msg}", timestamp: DateTool.timestamp()));
@@ -106,10 +106,20 @@ class KnowledgeCubit extends Cubit<KnowledgeState> {
   }
 
   // 删除类型
-  delType({dynamic data}) async {
+  delParentType({dynamic data}) async {
     ResultBean resultBean = await typeRepository.delType(data);
     if (resultBean.code == 0) {
-      emit(KnowledgeSuccessState(msgSuccess: '${resultBean.msg}'));
+      emit(KnowledgeDelSuccessState(delType: 0,msgSuccess: '${resultBean.msg}'));
+    } else {
+      emit(KnowledgeFailState(msgFail: "${resultBean.msg}"));
+    }
+  }
+
+  // 删除类型
+  delChildType({dynamic data}) async {
+    ResultBean resultBean = await typeRepository.delType(data);
+    if (resultBean.code == 0) {
+      emit(KnowledgeDelSuccessState(delType: 1,msgSuccess: '${resultBean.msg}'));
     } else {
       emit(KnowledgeFailState(msgFail: "${resultBean.msg}"));
     }
