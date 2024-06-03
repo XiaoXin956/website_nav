@@ -6,6 +6,7 @@ class TypeLabelBean {
 
   TypeLabelBean({this.id, this.parentId, this.name, this.parent});
 
+
   TypeLabelBean.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     parentId = json['parent_id'];

@@ -89,7 +89,7 @@ class LoginPage extends StatelessWidget {
                           child: Text("${S.of(context).login}")),
                       ElevatedButton(
                           onPressed: () {
-                            loginCibit?.loginUser(map: {"user_email": email, "password": password, "user_type": 2, "type": "reg"});
+                            loginCibit?.loginUser(map: {"user_email": email,"password": password, "user_type": 2, "type": "reg"});
                           },
                           child: Text("${S.of(context).reg}")),
                     ],

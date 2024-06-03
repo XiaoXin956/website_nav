@@ -87,14 +87,8 @@ class KnowledgeCubit extends Cubit<KnowledgeState> {
     emit(KnowledgeLoadingState());
     ResultBean resultBean = await knowledgeRepository.searchKnowledge(data);
     if (resultBean.code == 0) {
-      var decode = json.decode(resultBean.data);
-      dynamic result = (decode as List<dynamic>).map((e) {
-        return {
-          "type_bean": TypeLabelBean.fromJson(e['type_bean']),
-          "know_data": (e['result'] as List<dynamic>).map((e) => KnowledgeBean.fromJson(e)).toList(),
-        };
-      }).toList();
-      emit(KnowledgeSearchDataState(knowData: result));
+        List<KnowResult> knowResult = (resultBean.data as List<dynamic>).map((e) => KnowResult.fromJson(e)).toList();
+      emit(KnowledgeSearchDataState(knowData: knowResult));
     } else {
       emit(KnowledgeFailState(msgFail: "${resultBean.msg}"));
     }

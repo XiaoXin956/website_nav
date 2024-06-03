@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:website_nav/bean/knowledge_bean.dart';
 import 'package:website_nav/bean/type_bean.dart';
 
 class KnowledgeState extends Equatable {
@@ -120,7 +121,7 @@ class LabelTypeSelectChildState extends KnowledgeState {
 }
 
 class KnowledgeSearchDataState extends KnowledgeState {
-  final dynamic knowData;
+  final List<KnowResult>? knowData;
 
   KnowledgeSearchDataState({required this.knowData});
 
